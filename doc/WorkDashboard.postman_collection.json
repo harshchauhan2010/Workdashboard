@@ -1,0 +1,3317 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+    "name": "WorkDashboard API (with Full Seeds)",
+    "description": "Comprehensive Postman Collection with complete seed data bodies for Users, Managers, Tech Leads, and Squads A through F.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "c64a8975-e50a-4029-b2df-962f4424399c",
+      "type": "string"
+    },
+    {
+      "key": "squadId",
+      "value": "30000000-0000-0000-0000-000000000001",
+      "type": "string"
+    },
+    {
+      "key": "memberId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "taskId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assignmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "developer1Id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "developer2Id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workLogId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "blockerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "presetSlug",
+      "value": "api_keys",
+      "type": "string"
+    },
+    {
+      "key": "templateId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "systemTemplateId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "routineId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "periodId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. System & Health",
+      "item": [
+        {
+          "name": "Health Check (DB Diagnostic)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Auth Module",
+      "item": [
+        {
+          "name": "GET /api/auth/me (My Profile)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('userId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Users Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. GET /api/users (List Active Users)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && Array.isArray(json.data)) {",
+                  "    const devs = json.data.filter(u => u.system_role === 'DEVELOPER');",
+                  "    if (devs[0]) {",
+                  "      pm.collectionVariables.set('developer1Id', devs[0].id);",
+                  "      console.log('Saved developer1Id:', devs[0].id, devs[0].full_name);",
+                  "    }",
+                  "    if (devs[1]) {",
+                  "      pm.collectionVariables.set('developer2Id', devs[1].id);",
+                  "      console.log('Saved developer2Id:', devs[1].id, devs[1].full_name);",
+                  "    }",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/users/:id (Get Single User)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. SEED USER: Marcus Vance (Engineering Manager)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('userId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_marcus_vance\",\n  \"full_name\": \"Marcus Vance\",\n  \"email\": \"marcus.vance@workdash.internal\",\n  \"role_title\": \"Engineering Manager\",\n  \"system_role\": \"MANAGER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"Agile\",\n    \"Scrum\",\n    \"Capacity Planning\",\n    \"Delivery Management\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. SEED USER: David Miller (Tech Lead - Squad A)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('developer1Id', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_david_miller\",\n  \"full_name\": \"David Miller\",\n  \"email\": \"david.m@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad A\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"Go\",\n    \"Node.js\",\n    \"PostgreSQL\",\n    \"Microservices\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. SEED USER: Sarah Jenkins (Tech Lead - Squad B)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_sarah_jenkins\",\n  \"full_name\": \"Sarah Jenkins\",\n  \"email\": \"sarah.j@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad B\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"React\",\n    \"TypeScript\",\n    \"Next.js\",\n    \"Architecture\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. SEED USER: Robert Chang (Tech Lead - Squad C)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_robert_chang\",\n  \"full_name\": \"Robert Chang\",\n  \"email\": \"robert.c@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad C\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"iOS\",\n    \"Android\",\n    \"Flutter\",\n    \"Swift\",\n    \"Kotlin\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. SEED USER: Elena Rostova (Tech Lead - Squad D)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_elena_rostova\",\n  \"full_name\": \"Elena Rostova\",\n  \"email\": \"elena.r@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad D\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"Kubernetes\",\n    \"AWS\",\n    \"Terraform\",\n    \"Observability\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. SEED USER: Marcus Brody (Tech Lead - Squad E)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_marcus_brody\",\n  \"full_name\": \"Marcus Brody\",\n  \"email\": \"marcus.b@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad E\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"Playwright\",\n    \"k6\",\n    \"SecOps\",\n    \"SOC2\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9. SEED USER: Chiranshi Thummar (Tech Lead - Squad F)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_chiranshi_thummar\",\n  \"full_name\": \"Chiranshi Thummar\",\n  \"email\": \"chiranshi.t@workdash.internal\",\n  \"role_title\": \"Tech Lead - Squad F\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"LEAD\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 8,\n  \"skills\": [\n    \"Python\",\n    \"PyTorch\",\n    \"LLMs\",\n    \"MLOps\",\n    \"FastAPI\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10. SEED USER: Alex Chen (Senior Backend Engineer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('developer2Id', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clerk_id\": \"user_clerk_alex_chen\",\n  \"full_name\": \"Alex Chen\",\n  \"email\": \"alex.chen@workdash.internal\",\n  \"role_title\": \"Senior Backend Engineer\",\n  \"system_role\": \"DEVELOPER\",\n  \"seniority\": \"L3_SENIOR\",\n  \"weekly_capacity_hours\": 40,\n  \"recurring_overhead_hours\": 6,\n  \"skills\": [\n    \"Node.js\",\n    \"Go\",\n    \"PostgreSQL\",\n    \"Redis\",\n    \"OAuth2\",\n    \"JWT\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11. PATCH /api/users/:id (Update User Details)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role_title\": \"Principal Architect\",\n  \"seniority\": \"L5_PRINCIPAL\",\n  \"weekly_capacity_hours\": 35,\n  \"skills\": [\n    \"Node.js\",\n    \"PostgreSQL\",\n    \"Go\",\n    \"Docker\",\n    \"Kubernetes\",\n    \"Architecture\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "12. PATCH /api/users/:id (Reactivate User)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. DELETE /api/users/:id (Soft-Delete User)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Squads Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. GET /api/squads (List Active Squads)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/squads/:id (Get Squad with Members & Stats)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. SEED SQUAD A: FinTech Core Platform",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('squadId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad A (FinTech Core Platform)\",\n  \"badge_code\": \"ALPHA\",\n  \"focus_domain\": \"Alpha FinTech Platform · High-Throughput APIs\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 320\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. SEED SQUAD B: E-Commerce Web Portal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad B (E-Commerce Web Portal)\",\n  \"badge_code\": \"BETA\",\n  \"focus_domain\": \"Beta E-Commerce Portal · Next.js & Design System\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 400\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. SEED SQUAD C: Mobile POS & iOS/Android",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad C (Mobile POS & iOS/Android)\",\n  \"badge_code\": \"GAMMA\",\n  \"focus_domain\": \"Gamma POS Suite · Native iOS/Android POS Engine\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 250\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. SEED SQUAD D: Cloud Infra & SRE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad D (Cloud Infra & SRE)\",\n  \"badge_code\": \"DELTA\",\n  \"focus_domain\": \"Delta Cloud & SRE · Kubernetes & Multi-Cloud Autoscaling\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 500\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. SEED SQUAD E: Security & QA Automation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad E (Security & QA Automation)\",\n  \"badge_code\": \"ECHO\",\n  \"focus_domain\": \"Echo SecOps & QA · SOC2 Compliance & Load Testing\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 300\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. SEED SQUAD F: Machine Learning & AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Squad F (Machine Learning & AI)\",\n  \"badge_code\": \"PROJECT\",\n  \"focus_domain\": \"Squad F Machine Learning · LLM Pipelines & Vision Models\",\n  \"lead_user_id\": \"{{userId}}\",\n  \"budget_hours\": 350\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9. PATCH /api/squads/:id (Update Budget & Health)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budget_hours\": 450,\n  \"health\": \"HEALTHY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10. DELETE /api/squads/:id (Soft-Delete Squad)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Squad Members Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. GET /api/squads/:id/members (List Squad Members)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. POST /api/squads/:id/members (Add Member - 100% Allocation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('memberId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"allocation_percentage\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. POST /api/squads/:id/members (Add Member - Custom Allocation %)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"allocation_percentage\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squads/{{squadId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squads",
+                "{{squadId}}",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. PATCH /api/squad-members/:id (Update Allocation %)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allocation_percentage\": 80\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/squad-members/{{memberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squad-members",
+                "{{memberId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. DELETE /api/squad-members/:id (Soft-Remove Member from Squad)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/squad-members/{{memberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "squad-members",
+                "{{memberId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Tasks Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. GET /api/tasks (List All Tasks)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/tasks (Filter by Squad)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks?squad_id={{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "squad_id",
+                  "value": "{{squadId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /api/tasks (Filter by Status - IN_PROGRESS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks?status=IN_PROGRESS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "IN_PROGRESS"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. SEED TASK: Build Stripe Payment Gateway (PRE_PLANNING)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('taskId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Build Payment Gateway Integration\",\n  \"description\": \"Integrate Stripe API with webhook handling for subscription billing\",\n  \"squad_id\": \"{{squadId}}\",\n  \"task_type\": \"PRE_PLANNING\",\n  \"category\": \"DEVELOPMENT\",\n  \"priority\": \"P1_HIGH\",\n  \"status\": \"IN_PROGRESS\",\n  \"estimated_hours\": 16,\n  \"due_date\": \"2026-09-30T18:00:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. SEED TASK: Safari JWT Cookie Bug (AD_HOC_EMERGENCY)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Fix Safari JWT Token Refresh Policy Bug\",\n  \"description\": \"Safari ITP blocking cross-subdomain refresh token cookie exchange\",\n  \"squad_id\": \"{{squadId}}\",\n  \"task_type\": \"AD_HOC_EMERGENCY\",\n  \"category\": \"BUG_FIX\",\n  \"priority\": \"P1_HIGH\",\n  \"status\": \"TO_DO\",\n  \"estimated_hours\": 4,\n  \"due_date\": \"2026-09-20T12:00:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. SEED TASK: Weekly Tech Architecture Sync (RECURRING_ROUTINE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Weekly Tech Architecture & Scaling Review\",\n  \"description\": \"Cross-squad architecture review meeting and RFC approval\",\n  \"squad_id\": \"{{squadId}}\",\n  \"task_type\": \"RECURRING_ROUTINE\",\n  \"recurrence_frequency\": \"WEEKLY\",\n  \"category\": \"MEETING\",\n  \"priority\": \"P2_MEDIUM\",\n  \"status\": \"IN_PROGRESS\",\n  \"estimated_hours\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. GET /api/tasks/:id (Get Task with Assignments & Blockers)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. PATCH /api/tasks/:id (Move Task to COMPLETED)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9. DELETE /api/tasks/:id (Delete Task)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Task Assignments Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. GET /api/tasks/:id/assignments (List Task Assignments)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. POST /api/tasks/:id/assignments (Single Developer - 16 hrs)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data[0] && json.data[0].id) {",
+                  "    pm.collectionVariables.set('assignmentId', json.data[0].id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"split_mode\": \"SINGLE_DEVELOPER\",\n  \"assignments\": [\n    {\n      \"user_id\": \"{{developer1Id}}\",\n      \"assigned_hours\": 16\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. POST /api/tasks/:id/assignments (Multiple Developers - Split 8h / 8h)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"split_mode\": \"MULTIPLE_DEVELOPERS\",\n  \"assignments\": [\n    {\n      \"user_id\": \"{{developer1Id}}\",\n      \"assigned_hours\": 8\n    },\n    {\n      \"user_id\": \"{{developer2Id}}\",\n      \"assigned_hours\": 8\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. POST /api/tasks/:id/assignments (Entire Team - 2h per member)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"split_mode\": \"ENTIRE_TEAM\",\n  \"assigned_hours_per_person\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. DELETE /api/assignments/:id (Unassign Developer)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "assignments",
+                "{{assignmentId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Work Logs Module (Seeds & CRUD)",
+      "item": [
+        {
+          "name": "1. POST /api/tasks/:id/work-logs (Log 2.5 hours on Task)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('workLogId', json.data.id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{developer1Id}}\",\n  \"hours\": 2.5,\n  \"notes\": \"Implemented authentication middleware, validation layers, and unit test cases\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/work-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "work-logs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. POST /api/tasks/:id/work-logs (Log 3.5 hours on Task)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{developer2Id}}\",\n  \"hours\": 3.5,\n  \"notes\": \"Optimized database connection pooling and completed integration test suite\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/work-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "work-logs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /api/tasks/:id/work-logs (List Logs for Task)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/work-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "work-logs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET /api/users/:id/work-logs (List Developer Timesheet)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/work-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "work-logs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. DELETE /api/work-logs/:id (Delete Log Entry)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/work-logs/{{workLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "work-logs",
+                "{{workLogId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Task Blockers",
+      "item": [
+        {
+          "name": "1. POST /api/tasks/:id/blockers (Report Blocker)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('blockerId', jsonData.data.id);",
+                  "    console.log('Saved blockerId:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reported_by_user_id\": \"{{developer1Id}}\",\n  \"category\": \"TECHNICAL_IMPEDIMENT\",\n  \"severity\": \"CRITICAL_BLOCKER\",\n  \"reason\": \"Third-party sandbox environment returning 500 error during webhook verification\",\n  \"business_impact\": \"Payment gateway integration blocked — sprint delivery at risk\",\n  \"mitigation_action\": \"Raised ticket with DevOps & vendor support team\",\n  \"expected_resolution_date\": \"2026-09-25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/blockers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "blockers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/tasks/:id/blockers (List Blockers for Task)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}/blockers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{taskId}}",
+                "blockers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /api/blockers (List All Unresolved Blockers - Manager View)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blockers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blockers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET /api/blockers/:id (Get Blocker Details)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blockers/{{blockerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blockers",
+                "{{blockerId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. PATCH /api/blockers/:id/resolve (Resolve Blocker - Manager Action)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mitigation_action\": \"Vendor resolved sandbox outage; webhook verification succeeded.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/blockers/{{blockerId}}/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blockers",
+                "{{blockerId}}",
+                "resolve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. DELETE /api/blockers/:id (Delete Blocker)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blockers/{{blockerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blockers",
+                "{{blockerId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Blocker Presets",
+      "item": [
+        {
+          "name": "1. POST /api/blocker-presets (Manager Creates Blocker Template)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.key_slug) {",
+                  "    pm.collectionVariables.set('presetSlug', jsonData.data.key_slug);",
+                  "    console.log('Saved presetSlug:', jsonData.data.key_slug);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key_slug\": \"api_keys\",\n  \"label\": \"API Keys Missing\",\n  \"category\": \"DEPENDENCY\",\n  \"severity\": \"CRITICAL_BLOCKER\",\n  \"description_template\": \"Awaiting production API keys and OAuth credentials for [SERVICE].\",\n  \"impact_template\": \"Integration blocked; feature delivery delayed.\",\n  \"mitigation_template\": \"Escalated with DevOps team for key provisioning.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/blocker-presets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blocker-presets"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/blocker-presets (List All Templates)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blocker-presets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blocker-presets"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /api/blocker-presets/:slug (Get Template by Slug)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blocker-presets/{{presetSlug}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blocker-presets",
+                "{{presetSlug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. DELETE /api/blocker-presets/:slug (Delete Blocker Template)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blocker-presets/{{presetSlug}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "blocker-presets",
+                "{{presetSlug}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Active Timers",
+      "item": [
+        {
+          "name": "1. GET /api/timers/me (Get My Active Timer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. POST /api/timers/start (Start Timer on Task)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": \"{{taskId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "start"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. PATCH /api/timers/pause (Pause Running Timer)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seconds_elapsed\": 1800\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/pause",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "pause"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. PATCH /api/timers/resume (Resume Paused Timer)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "resume"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. POST /api/timers/stop (Stop Timer & Log Work)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seconds_elapsed\": 7200,\n  \"notes\": \"Completed feature implementation and unit tests via live stopwatch timer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/stop",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "stop"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. DELETE /api/timers/me (Discard Active Timer)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/timers/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "timers",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Task Templates",
+      "item": [
+        {
+          "name": "1. GET /api/task-templates (List All Templates)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.length > 0) {",
+                  "    var custom = jsonData.data.find(function(t) { return !t.is_system; });",
+                  "    var system = jsonData.data.find(function(t) { return t.is_system; });",
+                  "    if (custom) pm.collectionVariables.set('templateId', custom.id);",
+                  "    if (system) pm.collectionVariables.set('systemTemplateId', system.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/task-templates?category=BUG_FIX (Filter by Category)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates?category=BUG_FIX",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "BUG_FIX"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. POST /api/task-templates (Create Custom Template)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('templateId', jsonData.data.id);",
+                  "    console.log('Saved templateId:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Production Hotfix Blueprint\",\n  \"default_task_title\": \"Hotfix: [Component/Issue Description]\",\n  \"category\": \"BUG_FIX\",\n  \"task_type\": \"AD_HOC_EMERGENCY\",\n  \"default_estimated_hours\": 3.5,\n  \"default_priority\": \"P1_HIGH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET /api/task-templates/:id (Get Template Details)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates/{{templateId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates",
+                "{{templateId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. PUT /api/task-templates/:id (Update Custom Template)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Production Hotfix Blueprint v2\",\n  \"default_estimated_hours\": 4.5,\n  \"default_priority\": \"P1_HIGH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates/{{templateId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates",
+                "{{templateId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. POST /api/task-templates/:id/instantiate (Instantiate Task Blueprint)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.task && jsonData.task.id) {",
+                  "    pm.collectionVariables.set('taskId', jsonData.task.id);",
+                  "    console.log('Saved instantiated taskId:', jsonData.task.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"squad_id\": \"{{squadId}}\",\n  \"title\": \"Hotfix: Payment Gateway timeout exception handling\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates/{{templateId}}/instantiate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates",
+                "{{templateId}}",
+                "instantiate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. DELETE /api/task-templates/:id (Delete Custom Template)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/task-templates/{{templateId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "task-templates",
+                "{{templateId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Recurring Routines",
+      "item": [
+        {
+          "name": "1. GET /api/recurring-routines/me (My Routines as Developer 1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set('routineId', jsonData.data[0].id);",
+                  "    console.log('Saved routineId:', jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user-id",
+                "value": "{{developer1Id}}",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/recurring-routines?userId={{developer1Id}} (List by Developer 1)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines?userId={{developer1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{developer1Id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. POST /api/recurring-routines (Create Daily Standup for Developer 1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('routineId', jsonData.data.id);",
+                  "    console.log('Saved routineId:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{developer1Id}}\",\n  \"squad_id\": \"{{squadId}}\",\n  \"title\": \"Daily Standup & Squad Sync\",\n  \"frequency\": \"DAILY\",\n  \"schedule_label\": \"Every day · 9:30 AM\",\n  \"allocated_hours\": 2.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. POST /api/recurring-routines (Create Weekly Mentoring for Developer 2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{developer2Id}}\",\n  \"squad_id\": \"{{squadId}}\",\n  \"title\": \"PR Reviews & Tech Mentoring\",\n  \"frequency\": \"WEEKLY\",\n  \"schedule_label\": \"Tue, Thu · 2:00 PM\",\n  \"allocated_hours\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. GET /api/recurring-routines/:id (Get Routine Details)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines/{{routineId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines",
+                "{{routineId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. PUT /api/recurring-routines/:id (Update Routine Hours/Label)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schedule_label\": \"Every day · 9:00 AM\",\n  \"allocated_hours\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines/{{routineId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines",
+                "{{routineId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. DELETE /api/recurring-routines/:id (Delete Routine)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recurring-routines/{{routineId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "recurring-routines",
+                "{{routineId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Capacity Engine",
+      "item": [
+        {
+          "name": "1. GET /api/capacity/developers (Developer Capacity Heatmap)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/developers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "developers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/capacity/developers?squadId={{squadId}} (Filter by Squad)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/developers?squadId={{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "developers"
+              ],
+              "query": [
+                {
+                  "key": "squadId",
+                  "value": "{{squadId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /api/capacity/me (My Personal Capacity Stats)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user-id",
+                "value": "{{developer1Id}}",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET /api/capacity/developers/:id (Get Developer Capacity by ID)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/developers/{{developer1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "developers",
+                "{{developer1Id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. GET /api/capacity/squads (Squads Capacity Rollup)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/squads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "squads"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. GET /api/capacity/squads/:id (Single Squad Capacity Summary)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/capacity/squads/{{squadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "capacity",
+                "squads",
+                "{{squadId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Planning Periods (Sprint Cycles)",
+      "item": [
+        {
+          "name": "1. GET /api/planning-periods/current (Get Active Sprint)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods/current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods",
+                "current"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /api/planning-periods (List All Sprints)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. POST /api/planning-periods (Create Sprint 43 - 7-Day Active)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('periodId', jsonData.data.id);",
+                  "    console.log('Saved periodId:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sprint 43 · Sep 21 - Sep 27\",\n  \"start_date\": \"2026-09-21\",\n  \"end_date\": \"2026-09-27\",\n  \"is_current\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. POST /api/planning-periods (Create Sprint 44 - 7-Day Upcoming)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sprint 44 · Sep 28 - Oct 04\",\n  \"start_date\": \"2026-09-28\",\n  \"end_date\": \"2026-10-04\",\n  \"is_current\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. GET /api/planning-periods/:id (Get Sprint Details)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods/{{periodId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods",
+                "{{periodId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. PATCH /api/planning-periods/:id/set-current (Switch Active Sprint)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods/{{periodId}}/set-current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods",
+                "{{periodId}}",
+                "set-current"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. PUT /api/planning-periods/:id (Update Sprint Details)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sprint 43 · Sep 21 - Sep 27 (Hardening Sprint)\",\n  \"end_date\": \"2026-09-27\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods/{{periodId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods",
+                "{{periodId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. DELETE /api/planning-periods/:id (Delete Sprint)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-dev-user",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/planning-periods/{{periodId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "planning-periods",
+                "{{periodId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

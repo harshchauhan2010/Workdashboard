@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkDashboard — Engineering Capacity & Operations Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            display: ['Sora', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Consolas', 'monospace']
+          },
+          colors: {
+            slate: { 50:'#F8F7F4', 100:'#F1EFE9', 200:'#E4E0D8', 300:'#D0CABE', 400:'#A9A192', 500:'#847B6C', 600:'#665D4F', 700:'#4A423A', 800:'#312A24', 900:'#1E1917', 950:'#120F0D' },
+            blue: { 50:'#EEF3FB', 100:'#DCE7F6', 200:'#B6CFEC', 300:'#8AB1DE', 400:'#5C8FCB', 500:'#3A6FB0', 600:'#285691', 700:'#1F4373', 800:'#1A3559', 900:'#172C48', 950:'#0E1B2E' },
+            indigo: { 50:'#F2EFFB', 100:'#E4DEF5', 200:'#C9BDEB', 300:'#A996DC', 400:'#8871C8', 500:'#6E54AF', 600:'#574092', 700:'#453275', 800:'#37285D', 900:'#2B1F49', 950:'#1A122E' },
+            emerald: { 50:'#EEF6F0', 100:'#D9EBDD', 200:'#B3D7BE', 300:'#86BC98', 400:'#5C9E74', 500:'#3F8258', 600:'#326A47', 700:'#2A5539', 800:'#1F4029', 900:'#16301F', 950:'#0D1F13' },
+            amber: { 50:'#FBF3E7', 100:'#F5E4C4', 200:'#EBC988', 300:'#DFAD57', 400:'#CE9339', 500:'#B87A26', 600:'#97621C', 700:'#794E18', 800:'#5C3B13', 900:'#452C0F', 950:'#281A09' },
+            rose: { 50:'#FBEEEC', 100:'#F5D8D3', 200:'#E9B2A8', 300:'#DA8677', 400:'#C75F4C', 500:'#AE452F', 600:'#8E3722', 700:'#712C1B', 800:'#582316', 900:'#421A11', 950:'#280F0A' },
+            red: { 50:'#FBEEEC', 100:'#F5D8D3', 200:'#E9B2A8', 300:'#DA8677', 400:'#C75F4C', 500:'#AE452F', 600:'#8E3722', 700:'#712C1B', 800:'#582316', 900:'#421A11', 950:'#280F0A' },
+            purple: { 50:'#F4EFF9', 100:'#E7DBF1', 200:'#CDB4E3', 300:'#B08BD2', 400:'#9367BE', 500:'#7A4CA6', 600:'#623C87', 700:'#4E306C', 800:'#3D2554', 900:'#2E1C40', 950:'#1C1128' },
+            teal: { 50:'#ECF6F5', 100:'#D3EBE8', 200:'#A6D6D0', 300:'#75BDB4', 400:'#4CA095', 500:'#35837A', 600:'#2A6961', 700:'#22544D', 800:'#1A413B', 900:'#14312C', 950:'#0B1D1A' },
+            cyan: { 50:'#EDF6F9', 100:'#D3EBF1', 200:'#A7D7E3', 300:'#78BDCF', 400:'#4FA1B8', 500:'#35849C', 600:'#2A6A7F', 700:'#235567', 800:'#1B4250', 900:'#15323D', 950:'#0C1E25' },
+          },
+          borderRadius: {
+            'lg': '0.625rem',
+            'xl': '0.875rem',
+            '2xl': '1.125rem',
+            '3xl': '1.5rem',
+          },
+          boxShadow: {
+            'card': '0 1px 2px 0 rgba(30,25,23,0.04), 0 3px 10px -4px rgba(30,25,23,0.06)',
+            'card-hover': '0 6px 16px -6px rgba(30,25,23,0.10), 0 2px 6px -2px rgba(30,25,23,0.05)',
+            'elevated': '0 14px 30px -12px rgba(30,25,23,0.16), 0 4px 10px -6px rgba(30,25,23,0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-slate-50 text-slate-900 h-full flex overflow-hidden antialiased font-sans text-sm leading-relaxed">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SIDEBAR                                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <aside id="app-sidebar" class="w-[272px] flex flex-col justify-between flex-shrink-0 z-30 select-none sidebar-container">
+
+    <!-- Logo -->
+    <div>
+      <div class="h-[72px] px-5 flex items-center gap-3 border-b border-slate-100">
+        <div class="h-9 w-9 rounded-xl bg-blue-700 flex items-center justify-center text-white text-base shadow-sm">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[15px] font-display font-bold tracking-tight text-slate-900 truncate">WorkDashboard</div>
+          <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+            <span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span></span>
+            Enterprise · v2.4
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Trigger -->
+      <div class="px-4 pt-5">
+        <button onclick="toggleCommandPalette()" class="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-xl px-3.5 py-2.5 text-sm flex items-center justify-between transition-colors">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-xs text-slate-400"></i>
+            <span>Search...</span>
+          </span>
+          <kbd class="text-xs font-mono text-slate-400 bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-sm">⌘K</kbd>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="px-4 pt-6 space-y-6">
+
+        <!-- ═══ MANAGER NAV ═══ -->
+        <div id="sidebar-nav-manager">
+        <div>
+          <div class="px-2 pb-2.5 text-[11px] font-semibold text-slate-400 tracking-[0.07em]">Operations</div>
+          <div class="space-y-1">
+            <button onclick="switchManagerTab('roster')" id="nav-btn-roster"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-users-viewfinder w-5 text-center text-blue-500"></i>
+                <span>Capacity Heatmap</span>
+              </span>
+              <span class="text-xs font-mono bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">50</span>
+            </button>
+
+            <button onclick="switchManagerTab('squads_hub')" id="nav-btn-squads_hub"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-people-group w-5 text-center text-indigo-500"></i>
+                <span>Teams / Squads Hub</span>
+              </span>
+              <span class="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-bold" id="nav-badge-squads-count">6</span>
+            </button>
+
+            <button onclick="switchManagerTab('dev_hub')" id="nav-btn-dev_hub"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-id-badge w-5 text-center text-cyan-600"></i>
+                <span>Engineer 360° View</span>
+              </span>
+              <span class="text-xs font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded">360°</span>
+            </button>
+
+            <button onclick="switchManagerTab('date_schedule')" id="nav-btn-date_schedule"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-calendar-day w-5 text-center text-teal-600"></i>
+                <span>Date & Schedule Search</span>
+              </span>
+              <span class="text-xs font-mono text-teal-700 bg-teal-50 px-2 py-0.5 rounded font-bold">New</span>
+            </button>
+
+            <button onclick="switchManagerTab('clients')" id="nav-btn-clients"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-diagram-project w-5 text-center text-indigo-500"></i>
+                <span>Project Teams Hub</span>
+              </span>
+              <span class="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-bold">6 Teams</span>
+            </button>
+
+            <button onclick="switchManagerTab('blockers')" id="nav-btn-blockers"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-triangle-exclamation w-5 text-center text-amber-500"></i>
+                <span>Task Blockers & Risks</span>
+              </span>
+              <span class="text-xs font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-bold" id="nav-badge-blockers">8</span>
+            </button>
+
+            <button onclick="switchManagerTab('templates')" id="nav-btn-templates"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <i class="fa-solid fa-layer-group w-5 text-center text-indigo-500"></i>
+                <span>Task Templates</span>
+              </span>
+              <span class="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-bold" id="nav-badge-templates">5</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Squad Pods -->
+        <div>
+          <div class="flex items-center justify-between px-2 pb-2.5">
+            <span class="text-[11px] font-semibold text-slate-400 tracking-[0.07em]">Squad Pods</span>
+            <button onclick="openCreateSquadModal()" title="Create New Team" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 hover:bg-indigo-50 px-2 py-0.5 rounded-lg transition-all">
+              <i class="fa-solid fa-plus text-[10px]"></i> New
+            </button>
+          </div>
+          <div id="sidebar-squad-list" class="space-y-0.5"></div>
+        </div>
+        </div>
+        <!-- ═══ /MANAGER NAV ═══ -->
+
+        <!-- ═══ DEVELOPER NAV ═══ -->
+        <div id="sidebar-nav-developer" class="hidden">
+          <div>
+            <div class="px-2 pb-2.5 text-[11px] font-semibold text-slate-400 tracking-[0.07em]">My Workspace</div>
+            <div class="space-y-1">
+              <button onclick="switchDeveloperSection('dev-section-overview', this)" id="devnav-btn-overview"
+                class="devnav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 transition-colors">
+                <i class="fa-solid fa-gauge-high w-5 text-center text-blue-500"></i>
+                <span>Overview</span>
+              </button>
+
+              <button onclick="switchDeveloperSection('dev-section-tasks', this)" id="devnav-btn-tasks"
+                class="devnav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                <span class="flex items-center gap-2.5">
+                  <i class="fa-solid fa-list-check w-5 text-center text-indigo-500"></i>
+                  <span>My Tasks</span>
+                </span>
+                <span class="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-bold" id="devnav-badge-tasks">–</span>
+              </button>
+
+              <button onclick="switchDeveloperSection('dev-section-analytics', this)" id="devnav-btn-analytics"
+                class="devnav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                <i class="fa-solid fa-chart-pie w-5 text-center text-purple-500"></i>
+                <span>My Analytics</span>
+              </button>
+
+              <button onclick="switchDeveloperSection('dev-section-logs', this)" id="devnav-btn-logs"
+                class="devnav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                <i class="fa-solid fa-clock-rotate-left w-5 text-center text-teal-600"></i>
+                <span>Work Logs & Deadlines</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- My Squad -->
+          <div class="mt-6">
+            <div class="px-2 pb-2.5 text-[11px] font-semibold text-slate-400 tracking-[0.07em]">My Squad</div>
+            <div id="sidebar-dev-squad-card" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <span class="h-2.5 w-2.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+              <div class="min-w-0">
+                <div class="text-sm font-semibold text-slate-800 truncate" id="sidebar-dev-squad-name">Squad A</div>
+                <div class="text-xs text-slate-400" id="sidebar-dev-squad-lead">Backend · FinTech Core</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /DEVELOPER NAV ═══ -->
+
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-slate-100">
+
+      <!-- Manager footer: org-wide capacity -->
+      <div id="sidebar-footer-manager" class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-500 font-medium">Org Capacity</span>
+          <span class="text-slate-700 font-mono font-bold">1,684 / 2,000h</span>
+        </div>
+
+        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-emerald-500 h-full rounded-full transition-all" style="width: 84.2%"></div>
+        </div>
+        <div class="flex justify-between text-xs font-mono text-slate-400">
+          <span>84.2% utilised</span>
+          <span class="text-emerald-600 font-semibold">316h free</span>
+        </div>
+      </div>
+
+      <!-- Developer footer: personal weekly load -->
+      <div id="sidebar-footer-developer" class="hidden p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-500 font-medium">My Weekly Load</span>
+          <span class="text-slate-700 font-mono font-bold" id="sidebar-dev-load-text">48.0 / 40.0h</span>
+        </div>
+
+        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div class="h-full rounded-full transition-all" id="sidebar-dev-bar-fill" style="width: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-danger));"></div>
+        </div>
+        <div class="flex justify-between text-xs font-mono text-slate-400">
+          <span id="sidebar-dev-util-badge">120% utilised</span>
+          <span class="font-semibold" id="sidebar-dev-buffer-text">+8.0h over</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- MAIN AREA                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- Top Bar -->
+    <header class="h-[72px] border-b border-slate-200 bg-white px-7 flex items-center justify-between gap-4 flex-shrink-0 z-20">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-center gap-2 text-sm text-slate-500 truncate">
+          <span>Workspace</span>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+          <span class="text-slate-800 font-semibold truncate" id="header-view-title">Capacity Heatmap</span>
+        </div>
+        <span class="hidden sm:inline-flex h-5 w-px bg-slate-200"></span>
+        <div class="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+          <i class="fa-regular fa-calendar text-xs text-slate-400"></i>
+          <span class="font-mono">Sep 1 – 7, 2026</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-100 ml-1">Current Week</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3.5">
+        <!-- Role Switcher -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl">
+          <button onclick="switchViewRole('manager')" id="btn-role-mgr"
+            class="px-3.5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-800 shadow-sm transition-all flex items-center gap-2">
+            <i class="fa-solid fa-user-tie text-blue-600"></i> Manager
+          </button>
+          <button onclick="switchViewRole('developer')" id="btn-role-dev"
+            class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-code"></i> Developer
+          </button>
+        </div>
+
+        <span class="h-6 w-px bg-slate-200"></span>
+
+        <!-- User Avatar -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-blue-700 flex items-center justify-center font-bold text-sm text-white shadow-sm" id="header-avatar">PM</div>
+          <div class="text-left hidden lg:block">
+            <div class="text-sm font-semibold text-slate-800 leading-tight" id="header-user-name">Marcus Vance</div>
+            <div class="text-xs text-slate-400 leading-tight mt-0.5" id="header-user-sub">Project Manager</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-[1400px] mx-auto w-full p-6 space-y-6">
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- MANAGER VIEW                            -->
+        <!-- ═══════════════════════════════════════ -->
+        <div id="view-manager" class="space-y-6">
+
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <div class="kpi-card space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Engineers</span>
+                <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span class="kpi-value text-slate-900" id="kpi-total-devs">52</span>
+                <span class="text-xs font-medium text-slate-400">developers</span>
+              </div>
+              <div class="text-xs text-slate-500 flex items-center gap-1.5" id="kpi-squads-count">
+                <span>5 Squads</span><span class="text-slate-300">•</span><span>5 Leads</span>
+              </div>
+            </div>
+
+            <div class="kpi-card space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Utilization</span>
+                <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-chart-pie"></i></span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span class="kpi-value text-emerald-600" id="kpi-utilization-pct">60.8%</span>
+              </div>
+              <div class="text-xs text-slate-500 font-medium" id="kpi-utilization-sub">1,265h / 2,080h allocated</div>
+            </div>
+
+            <div class="kpi-card space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Overbooked</span>
+                <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs"><i class="fa-solid fa-triangle-exclamation"></i></span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span class="kpi-value text-amber-600" id="kpi-overallocated-count">6</span>
+                <span class="text-xs font-medium text-slate-400">engineers</span>
+              </div>
+              <div class="text-xs text-amber-600 font-medium flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-exclamation text-[11px]"></i> Over 40h weekly limit
+              </div>
+            </div>
+
+            <div class="kpi-card space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Project Delivery SLA</span>
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs"><i class="fa-solid fa-diagram-project"></i></span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span class="kpi-value text-slate-900">5 <span class="text-base font-normal text-slate-400">/ 5</span></span>
+                <span class="text-xs font-medium text-slate-400">teams</span>
+              </div>
+              <div class="text-xs text-emerald-600 font-medium flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-[11px]"></i> All milestones on track
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══════════════════════════════════════ -->
+          <!-- TAB: ROSTER                             -->
+          <!-- ═══════════════════════════════════════ -->
+          <div id="tab-content-roster" class="space-y-4">
+
+            <!-- Toolbar -->
+            <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3 shadow-card">
+              <div class="flex items-center gap-3 flex-wrap flex-1 min-w-[300px]">
+                <div class="relative flex-1 max-w-[280px]">
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                  </div>
+                  <input type="text" id="roster-search-input" placeholder="Search developers..."
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all outline-none">
+                </div>
+                <select id="roster-squad-select" onchange="filterBySquadSelect(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-300">
+                  <option value="all">All Squads</option>
+                  <option value="squad_a">Squad A — Backend</option>
+                  <option value="squad_b">Squad B — Frontend</option>
+                  <option value="squad_c">Squad C — Mobile</option>
+                  <option value="squad_d">Squad D — Cloud/SRE</option>
+                  <option value="squad_e">Squad E — QA/Sec</option>
+                </select>
+                <div class="flex items-center bg-slate-100 p-1 rounded-lg text-sm">
+                  <button onclick="filterByCapacityStatus('all')" id="btn-filter-all" class="px-3 py-1.5 rounded-md bg-white text-slate-700 font-semibold shadow-sm">All</button>
+                  <button onclick="filterByCapacityStatus('over')" id="btn-filter-over" class="px-3 py-1.5 rounded-md text-rose-600 font-medium hover:bg-white/60">Over</button>
+                  <button onclick="filterByCapacityStatus('avail')" id="btn-filter-avail" class="px-3 py-1.5 rounded-md text-emerald-600 font-medium hover:bg-white/60">Free</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <div class="flex items-center bg-slate-100 p-1 rounded-lg">
+                  <button onclick="switchRosterView('table')" id="btn-view-table" class="p-2 rounded-md bg-white text-blue-600 shadow-sm text-sm px-3 flex items-center gap-1.5 font-semibold">
+                    <i class="fa-solid fa-list"></i> Table
+                  </button>
+                  <button onclick="switchRosterView('grid')" id="btn-view-grid" class="p-2 rounded-md text-slate-500 text-sm px-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-grip"></i> Cards
+                  </button>
+                </div>
+                <button onclick="openCreateDeveloperModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-user-plus text-xs"></i> + Add Developer
+                </button>
+                <button onclick="openCreateSquadModal()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-users-gear text-xs text-indigo-300"></i> + Create Team
+                </button>
+                <button onclick="openAssignModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-plus text-xs"></i> Assign Task
+                </button>
+              </div>
+            </div>
+
+            <!-- Table View -->
+            <div id="roster-view-table" class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-card">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b border-slate-100 bg-slate-50/80">
+                      <th class="px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Developer</th>
+                      <th class="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Recurring</th>
+                      <th class="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Pre-Planning</th>
+                      <th class="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Ad-Hoc</th>
+                      <th class="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Total</th>
+                      <th class="px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono w-56">Capacity</th>
+                      <th class="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Status</th>
+                      <th class="px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="roster-tbody" class="divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Grid View -->
+            <div id="roster-view-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+          </div>
+
+          <!-- ═══════════════════════════════════════ -->
+          <!-- TAB: SQUADS HUB (TEAM DASHBOARD)        -->
+          <!-- ═══════════════════════════════════════ -->
+          <div id="tab-content-squads_hub" class="space-y-6 hidden">
+            
+            <!-- Squad Selector & Toolbar -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-card flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 py-1" id="squads-hub-nav-pills">
+                <!-- Dynamically populated Squad pill buttons -->
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <button onclick="openCreateSquadModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-plus text-indigo-300"></i> New Squad
+                </button>
+                <button onclick="openAssignModalForCurrentSquad()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-shield-halved"></i> + Assign to Squad
+                </button>
+              </div>
+            </div>
+
+            <!-- Squad Hero Banner -->
+            <div id="squad-hub-hero-banner" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+              <!-- Dynamically populated hero -->
+            </div>
+
+            <!-- Squad KPIs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="squad-hub-kpi-grid">
+              <!-- Dynamically populated 4 KPI cards -->
+            </div>
+
+            <!-- Squad Analytics Charts (Side-by-Side) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              <!-- Chart 1: Squad Work Distribution Doughnut -->
+              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card space-y-4">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-chart-pie"></i></span>
+                    <div>
+                      <h4 class="font-bold text-slate-900 text-sm">Squad Workload Distribution</h4>
+                      <p class="text-xs text-slate-500 font-mono">Sprint vs Ad-Hoc vs Recurring breakdown</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-mono font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full" id="squad-chart-total-hours">--h</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                  <div class="h-44 relative flex items-center justify-center">
+                    <canvas id="chart-squad-donut"></canvas>
+                  </div>
+                  <div class="space-y-2 text-xs" id="chart-squad-donut-legend"></div>
+                </div>
+              </div>
+
+              <!-- Chart 2: Squad Engineers Load Comparison Bar Chart -->
+              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card space-y-4">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-chart-column"></i></span>
+                    <div>
+                      <h4 class="font-bold text-slate-900 text-sm">Squad Engineers Capacity Comparison</h4>
+                      <p class="text-xs text-slate-500 font-mono">Individual load vs 40.0h capacity limit</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-mono font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full" id="squad-chart-devs-count">-- devs</span>
+                </div>
+                <div class="h-48 relative">
+                  <canvas id="chart-squad-bar"></canvas>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Squad Task Backlog & Execution Board -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-base"><i class="fa-solid fa-list-check"></i></span>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Squad Task Backlog & Active Sprint Board</h3>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5">Tasks currently assigned and scheduled for this team</p>
+                  </div>
+                </div>
+
+                <!-- View Switcher & Filters -->
+                <div class="flex items-center gap-3 flex-wrap">
+                  <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200">
+                    <button id="squad-view-btn-board" onclick="setSquadTaskViewMode('board')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm">
+                      <i class="fa-solid fa-table-columns"></i> <span>Board</span>
+                    </button>
+                    <button id="squad-view-btn-list" onclick="setSquadTaskViewMode('list')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                      <i class="fa-solid fa-list-check"></i> <span>List</span>
+                    </button>
+                    <button id="squad-view-btn-grid" onclick="setSquadTaskViewMode('grid')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                      <i class="fa-solid fa-grip"></i> <span>Grid</span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 flex-wrap" id="squad-task-filter-pills">
+                    <!-- Dynamic task filter buttons -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assignee Person Filter Facepile & Smart Selector -->
+              <div id="squad-person-filter-facepile" class="p-3 bg-slate-50/70 rounded-2xl border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-3 select-none">
+                <!-- Dynamically populated with smart assignee filter controls -->
+              </div>
+              <div id="squad-person-filter-banner" class="hidden"></div>
+
+              <div id="squad-task-board-container">
+                <!-- Dynamically rendered task cards -->
+              </div>
+            </div>
+
+            <!-- Squad Members Roster & Direct 360° Drilldown -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base"><i class="fa-solid fa-users"></i></span>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Squad Engineers Roster & Capacity</h3>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5">Click any engineer to inspect their full 360° Developer Dashboard</p>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-full" id="squad-members-count-badge">-- Members</span>
+              </div>
+              <div id="squad-members-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically rendered developer cards with 360° inspect button -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══════════════════════════════════════ -->
+          <!-- TAB: DEVELOPER 360° DASHBOARD           -->
+          <!-- ═══════════════════════════════════════ -->
+          <div id="tab-content-dev_hub" class="space-y-6 hidden">
+            
+            <!-- Dev Selector & Controls Toolbar -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-card flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-3 flex-wrap flex-1 min-w-[300px]">
+                <select id="mgr-dev-squad-filter" onchange="onManagerDevSquadFilterChange(this.value)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-400">
+                  <!-- Squads options -->
+                </select>
+                <select id="mgr-dev-select" onchange="onManagerDevSelectChange(this.value)" class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-900 outline-none focus:border-blue-400 min-w-[240px]">
+                  <!-- Developers options -->
+                </select>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="openCreateDeveloperModal()" class="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all">
+                  <i class="fa-solid fa-user-plus text-[10px]"></i> + Add Developer
+                </button>
+                <button onclick="openEditDeveloperModal(state.currentManagerDevId)" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-all" title="Edit Developer Settings">
+                  <i class="fa-solid fa-user-pen text-[10px] text-slate-500"></i> Edit Profile
+                </button>
+                <button onclick="openAssignModalWithCurrentDev()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm flex items-center gap-2 transition-all">
+                  <i class="fa-solid fa-plus text-[10px]"></i> Assign Task
+                </button>
+              </div>
+            </div>
+
+            <!-- Developer Hero & Fuel Gauge Profile Card -->
+            <div id="mgr-dev-hero-card" class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-card space-y-5">
+              <!-- Dynamically populated hero & fuel gauge -->
+            </div>
+
+            <!-- Developer 4 Mini KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="mgr-dev-kpi-grid">
+              <!-- Dynamically populated 4 KPI cards -->
+            </div>
+
+            <!-- Developer Execution & Blocker Analysis Container -->
+            <div id="mgr-dev-blocker-analysis-container"></div>
+
+            <!-- Developer Analytics Charts (Side-by-Side) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              <!-- Chart 1: Developer Hours Burnup Bar Chart -->
+              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card space-y-4">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-chart-simple"></i></span>
+                    <div>
+                      <h4 class="font-bold text-slate-900 text-sm">Pre-Planning Hours Burnup & Velocity</h4>
+                      <p class="text-xs text-slate-500 font-mono">Hours logged across sprint days</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-mono">
+                    <button onclick="setManagerDevChartPeriod('week')" id="mgr-dev-btn-week" class="px-2.5 py-1 rounded-md bg-white text-blue-600 font-bold shadow-sm">Week</button>
+                    <button onclick="setManagerDevChartPeriod('month')" id="mgr-dev-btn-month" class="px-2.5 py-1 rounded-md text-slate-600">Month</button>
+                  </div>
+                </div>
+                <div class="h-48 relative">
+                  <canvas id="chart-mgr-dev-bar"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 2: Developer Work Type Donut Chart -->
+              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card space-y-4">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-pie-chart"></i></span>
+                    <div>
+                      <h4 class="font-bold text-slate-900 text-sm">Workload Category Breakdown</h4>
+                      <p class="text-xs text-slate-500 font-mono">Pre-Planning vs Ad-Hoc vs Recurring</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-mono font-bold bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full" id="mgr-dev-chart-total-tag">--h Total</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                  <div class="h-44 relative flex items-center justify-center">
+                    <canvas id="chart-mgr-dev-donut"></canvas>
+                  </div>
+                  <div class="space-y-2 text-xs" id="chart-mgr-dev-donut-legend"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Assigned Tasks Board (What is assigned, What should be done, What is completed) -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base"><i class="fa-solid fa-clipboard-list"></i></span>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Tasks & Work Management Board</h3>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5">Sprint backlog, Kanban workflow stages, and delivery tracking</p>
+                  </div>
+                </div>
+
+                <!-- Controls: View Switcher (Board, List, Grid) + Filter Pills -->
+                <div class="flex items-center gap-3 flex-wrap">
+                  <!-- Segmented View Toggle -->
+                  <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200">
+                    <button id="mgr-dev-view-btn-board" onclick="setManagerDevTaskViewMode('board')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-blue-700 shadow-sm">
+                      <i class="fa-solid fa-table-columns"></i> <span>Board</span>
+                    </button>
+                    <button id="mgr-dev-view-btn-list" onclick="setManagerDevTaskViewMode('list')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                      <i class="fa-solid fa-list-check"></i> <span>List</span>
+                    </button>
+                    <button id="mgr-dev-view-btn-grid" onclick="setManagerDevTaskViewMode('grid')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                      <i class="fa-solid fa-grip"></i> <span>Grid</span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 flex-wrap" id="mgr-dev-task-filter-pills">
+                    <!-- Dynamic task filter buttons when in grid view -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Workload Category Filter Bar (Pre-Planning vs Ad-Hoc vs Recurring) -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar flex-wrap" id="mgr-dev-task-category-tabs">
+                  <!-- Dynamically populated with category filter tabs -->
+                </div>
+              </div>
+
+              <!-- Active Filter Banner (Visible when filtered) -->
+              <div id="mgr-dev-task-filter-banner" class="hidden"></div>
+
+              <!-- Container for Board / List / Grid -->
+              <div id="mgr-dev-task-board-container">
+                <!-- Dynamically rendered content based on view mode -->
+              </div>
+            </div>
+
+            <!-- Developer Work Accomplishments & Logs Stream -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base"><i class="fa-solid fa-list-check"></i></span>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Work Log & Accomplishment Stream</h3>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5">Chronological record of time logged on specific tasks</p>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-semibold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/60 flex items-center gap-1.5">
+                  <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Engineer Timesheet Audit
+                </span>
+              </div>
+              <div id="mgr-dev-worklogs-container" class="space-y-3">
+                <!-- Dynamically rendered work logs -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══════════════════════════════════════ -->
+          <!-- TAB: PROJECT TEAMS                      -->
+          <!-- ═══════════════════════════════════════ -->
+          <div id="tab-content-clients" class="space-y-5 hidden">
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-card">
+              <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base border border-blue-100 shadow-2xs">
+                  <i class="fa-solid fa-diagram-project"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-base text-slate-900 tracking-tight">Dedicated Project Teams</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">Sprint budget burn, delivery status, and squad resource allocation</p>
+                </div>
+              </div>
+              <button onclick="openAssignModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5 self-start sm:self-auto">
+                <i class="fa-solid fa-plus text-[10px]"></i> Assign Task
+              </button>
+            </div>
+            <div id="clients-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+          </div>
+
+          <!-- ── TAB: DATE & SCHEDULE SEARCH ── -->
+          <div id="tab-content-date_schedule" class="space-y-6 hidden">
+            
+            <!-- Date Search Control Bar -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-card space-y-3.5">
+              <!-- Row 1: Header on Left, Date Selector Ribbon on Right -->
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base border border-blue-100 shadow-2xs">
+                    <i class="fa-solid fa-calendar-day"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base text-slate-900 tracking-tight">Schedule Dispatcher</h3>
+                    <p class="text-xs text-slate-500">Daily scheduled workload and engineer assignments</p>
+                  </div>
+                </div>
+
+                <!-- Date Navigation Pills -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="mgr-date-quick-pills">
+                  <!-- Dynamic Date Pills -->
+                </div>
+              </div>
+
+              <!-- Row 2: Search & Filters on Left, Status & View Mode on Right -->
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <!-- Search & Squad Dropdown -->
+                <div class="flex items-center gap-2.5 flex-1 flex-wrap">
+                  <div class="relative w-full sm:w-64">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </div>
+                    <input type="text" id="mgr-schedule-search-input" placeholder="Search task, engineer, project..."
+                      oninput="onManagerScheduleSearchInput(this.value)"
+                      class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-400 text-slate-800">
+                  </div>
+
+                  <div class="w-full sm:w-36">
+                    <select id="mgr-schedule-squad-filter" onchange="onManagerScheduleSquadFilterChange(this.value)"
+                      class="w-full px-2.5 py-1.5 text-xs font-medium rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white text-slate-700 outline-none cursor-pointer">
+                      <option value="all">All Squads</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Status Pills & View Switcher -->
+                <div class="flex items-center gap-2.5 flex-wrap self-end md:self-auto">
+                  <div class="flex items-center gap-1" id="mgr-schedule-status-pills">
+                    <!-- Dynamic Status Pills -->
+                  </div>
+
+                  <span class="hidden sm:inline-block w-px h-5 bg-slate-200"></span>
+
+                  <!-- View Switcher -->
+                  <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/80">
+                    <button id="mgr-date-view-btn-grouped" onclick="switchManagerDateViewMode('grouped')"
+                      class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-900 shadow-sm flex items-center gap-1">
+                      <i class="fa-solid fa-user-group text-[10px] text-blue-600"></i> Person
+                    </button>
+                    <button id="mgr-date-view-btn-matrix" onclick="switchManagerDateViewMode('matrix')"
+                      class="px-2.5 py-1 rounded-lg text-xs font-medium transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                      <i class="fa-solid fa-table-list text-[10px] text-slate-400"></i> Matrix
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date KPI Summary Banner -->
+            <div id="mgr-date-summary-banner" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Date Task Results (Grouped by Person or Task Matrix) -->
+            <div id="mgr-date-results-container" class="space-y-4">
+              <!-- Rendered dynamically -->
+            </div>
+
+          </div>
+
+          <!-- ── TAB: TASK BLOCKERS & RISKS ── -->
+          <div id="tab-content-blockers" class="space-y-6 hidden">
+            
+            <!-- Executive Summary & Header -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-card space-y-5">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-base border border-rose-100 shadow-2xs">
+                      <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                    <h3 class="font-bold text-lg text-slate-900 tracking-tight">Critical Blockers & Delivery Risks</h3>
+                  </div>
+                  <p class="text-xs text-slate-500">Active impediment resolution and risk mitigation registry</p>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                  <button onclick="openCreateBlockerModal()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Report Blocker
+                  </button>
+                  <button onclick="openAssignModal()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Assign Task
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4 Executive Blocker KPIs -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="blockers-kpi-container">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Modern Unified Filter Toolbar -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-card space-y-3.5">
+              <!-- Top Row: Status Segmented Controls & View Switcher -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <!-- Quick Status Tabs -->
+                <div class="flex items-center gap-2 flex-wrap" id="blockers-quick-status-pills">
+                  <!-- Dynamic status pills -->
+                </div>
+
+                <!-- View Mode Switcher -->
+                <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/80 self-start sm:self-auto">
+                  <button id="blockers-view-btn-matrix" onclick="setBlockerViewMode('matrix')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-white text-slate-900 shadow-sm">
+                    <i class="fa-solid fa-table-list text-[11px] text-blue-600"></i> <span>Table</span>
+                  </button>
+                  <button id="blockers-view-btn-cards" onclick="setBlockerViewMode('cards')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-grip text-[11px] text-slate-400"></i> <span>Cards</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Bottom Row: Search Box & Dropdowns -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-1 flex-wrap">
+                  <!-- Search Input -->
+                  <div class="relative w-full sm:w-80">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </div>
+                    <input type="text" id="blockers-search-input" placeholder="Search blocker, impact, or assignee..."
+                      oninput="onBlockerSearchInput(this.value)"
+                      class="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-400 text-slate-800">
+                    <button type="button" id="blockers-search-clear-btn" onclick="clearBlockerSearch()" title="Clear search"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 hidden cursor-pointer">
+                      <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                  </div>
+
+                  <!-- Squad Filter -->
+                  <div class="w-full sm:w-44">
+                    <select id="blockers-squad-filter" onchange="onBlockerSquadFilterChange(this.value)"
+                      class="w-full px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white text-slate-700 outline-none cursor-pointer">
+                      <option value="all">All Squads</option>
+                    </select>
+                  </div>
+
+                  <!-- Blocker Category Filter -->
+                  <div class="w-full sm:w-48">
+                    <select id="blockers-category-filter" onchange="onBlockerCategoryFilterChange(this.value)"
+                      class="w-full px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white text-slate-700 outline-none cursor-pointer">
+                      <option value="all">All Categories</option>
+                      <option value="CLIENT_DEPENDENCY">Client Dependency</option>
+                      <option value="TECHNICAL_IMPEDIMENT">Technical Impediment</option>
+                      <option value="REVIEW_BOTTLENECK">Review Bottleneck</option>
+                      <option value="RESOURCE_CAPACITY">Capacity Overload</option>
+                      <option value="SCOPE_CREEP">Scope Expansion</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Critical Blockers & Risks Container -->
+            <div id="blockers-dev-cards-container" class="space-y-4">
+              <!-- Dynamically rendered (Matrix Table or Action Cards) -->
+            </div>
+
+          </div>
+
+          <!-- ── TAB: TASK TEMPLATES ── -->
+          <div id="tab-content-templates" class="space-y-6 hidden">
+            <div class="template-library-hero rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden">
+              <div class="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                <div class="max-w-2xl space-y-3">
+                  <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/12 border border-white/15 text-indigo-100 text-[11px] font-bold uppercase tracking-wider font-mono">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Operations Library
+                  </span>
+                  <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Task templates</h2>
+                  <p class="text-sm text-indigo-100/80 leading-relaxed">Standardize repeatable work with ready-to-use blueprints for your teams. Every template becomes a one-click assignment shortcut.</p>
+                </div>
+                <button onclick="openTemplateEditor()" class="template-hero-action px-4 py-2.5 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 text-sm font-bold shadow-lg flex items-center gap-2 transition-all flex-shrink-0">
+                  <i class="fa-solid fa-plus text-xs"></i> New template
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div class="relative flex-1 max-w-xl">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input id="template-library-search" type="search" oninput="renderTemplateLibrary()" placeholder="Search templates by name, title, or category..." class="w-full pl-10 pr-4 py-2.5 text-sm">
+              </div>
+              <div id="template-library-filters" class="flex items-center gap-1.5 flex-wrap"></div>
+            </div>
+
+            <div id="template-library-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+          </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- DEVELOPER VIEW                          -->
+        <!-- ═══════════════════════════════════════ -->
+        <div id="view-developer" class="space-y-6 hidden">
+
+          <!-- ── DEVELOPER HERO CARD ── -->
+          <div id="dev-section-overview" class="bg-white rounded-2xl border border-slate-200 px-6 py-5 shadow-card scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div class="flex items-center gap-4 flex-wrap">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-sm flex-shrink-0" id="dev-workspace-avatar">AC</div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2.5 flex-wrap">
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight" id="dev-workspace-name">Alex Chen</h2>
+                    <select id="dev-workspace-switcher" onchange="switchDeveloperWorkspace(this.value)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 shadow-xs">
+                      <!-- Populated dynamically with all developers -->
+                    </select>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200" id="dev-workspace-squad">Squad A</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">Current Week · Sep 1–7</span>
+                  </div>
+                  <p class="text-sm text-slate-500" id="dev-workspace-role">Senior Node.js & Go Engineer · <span class="font-semibold text-slate-700 font-mono">40h / week</span></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 bg-slate-900 px-5 py-3 rounded-2xl text-white flex-shrink-0">
+                <span class="relative flex h-2.5 w-2.5 flex-shrink-0"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span></span>
+                <div>
+                  <div class="text-[11px] text-slate-400 uppercase tracking-widest">Active Timer</div>
+                  <div class="text-lg font-mono font-bold tracking-widest" id="dev-timer-display">01:24:38</div>
+                </div>
+                <button onclick="toggleTaskTimer('tsk_102')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-200 transition-colors">
+                  <i class="fa-solid fa-pause text-xs mr-1"></i> Pause
+                </button>
+              </div>
+            </div>
+            <div class="mt-5 pt-5 border-t border-slate-100 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                <div>
+                  <div class="text-xs font-semibold uppercase tracking-widest text-slate-400">Weekly Capacity Load</div>
+                  <div class="text-2xl font-bold text-slate-900 font-mono mt-1 flex items-center gap-3">
+                    <span id="dev-total-load-text">38.0 / 40.0h</span>
+                    <span id="dev-utilization-badge" class="text-sm px-3 py-1 rounded-full bg-amber-50 text-amber-600 font-sans font-semibold border border-amber-200">95%</span>
+                  </div>
+                </div>
+                <div id="dev-buffer-pill"></div>
+              </div>
+              <div class="h-4 w-full bg-slate-100 rounded-full overflow-hidden flex gap-px border border-slate-200">
+                <div id="gauge-seg-recurring" class="bg-purple-500 h-full rounded-l-full transition-all duration-500" style="width: 20%"></div>
+                <div id="gauge-seg-sprint" class="bg-blue-500 h-full transition-all duration-500" style="width: 50%"></div>
+                <div id="gauge-seg-adhoc" class="bg-amber-500 h-full transition-all duration-500" style="width: 25%"></div>
+                <div id="gauge-seg-pending" class="bg-rose-500 h-full rounded-r-full animate-pulse transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-5 text-sm text-slate-500">
+                <span class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-purple-500"></span><span id="legend-recurring-text">8.0h Recurring</span></span>
+                <span class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><span id="legend-sprint-text">20.0h Pre-Planning</span></span>
+                <span class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span><span id="legend-adhoc-text">10.0h Ad-Hoc</span></span>
+                <span class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-100 border border-emerald-400"></span><span id="legend-buffer-text">2.0h Free</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── KPI CARDS ── -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="kpi-card kpi-card-blue space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Total Tasks</span>
+                <span class="kpi-icon bg-blue-50 text-blue-600"><i class="fa-solid fa-list-check"></i></span>
+              </div>
+              <div class="kpi-value text-slate-900" id="dash-kpi-total">0</div>
+              <div class="kpi-sub" id="dash-kpi-total-sub">This week</div>
+            </div>
+
+            <div class="kpi-card kpi-card-emerald space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Completed</span>
+                <span class="kpi-icon bg-emerald-50 text-emerald-600"><i class="fa-solid fa-circle-check"></i></span>
+              </div>
+              <div class="kpi-value text-emerald-600" id="dash-kpi-done">0</div>
+              <div class="kpi-sub" id="dash-kpi-done-sub">0% rate</div>
+            </div>
+
+            <div class="kpi-card kpi-card-indigo space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label">Hours Logged</span>
+                <span class="kpi-icon bg-indigo-50 text-indigo-600"><i class="fa-regular fa-clock"></i></span>
+              </div>
+              <div class="kpi-value text-indigo-600" id="dash-kpi-logged">0h</div>
+              <div class="kpi-sub" id="dash-kpi-logged-sub">of 0h estimated</div>
+            </div>
+
+            <div class="kpi-card kpi-card-rose space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="kpi-label text-red-500">Overdue</span>
+                <span class="kpi-icon bg-red-50 text-red-500"><i class="fa-solid fa-triangle-exclamation"></i></span>
+              </div>
+              <div class="kpi-value text-red-500" id="dash-kpi-overdue">0</div>
+              <div class="kpi-sub text-red-400" id="dash-kpi-overdue-sub">tasks past due</div>
+            </div>
+          </div>
+
+          <!-- ── CHARTS ROW ── -->
+          <div id="dev-section-analytics" class="grid grid-cols-1 lg:grid-cols-3 gap-5 scroll-mt-24">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card">
+              <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2.5">
+                  <i class="fa-solid fa-chart-pie text-blue-500"></i> Task Breakdown
+                </h3>
+                <span class="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg font-medium">This Week</span>
+              </div>
+              <div class="flex items-center justify-center">
+                <div class="relative w-44 h-44">
+                  <canvas id="chart-task-donut"></canvas>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="donut-center-num">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-widest mt-0.5">Tasks</div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-5 space-y-2.5" id="chart-donut-legend"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card lg:col-span-2">
+              <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2.5">
+                  <i class="fa-solid fa-chart-bar text-indigo-500"></i> Hours Logged by Day
+                </h3>
+                <div class="flex items-center bg-slate-100 p-0.5 rounded-xl">
+                  <button onclick="switchHoursChartView('week')" id="chart-btn-week" class="px-3.5 py-1.5 rounded-lg text-sm bg-white text-slate-700 font-semibold shadow-sm transition-all">This Week</button>
+                  <button onclick="switchHoursChartView('month')" id="chart-btn-month" class="px-3.5 py-1.5 rounded-lg text-sm text-slate-500 font-medium transition-all">This Month</button>
+                </div>
+              </div>
+              <div class="h-52">
+                <canvas id="chart-hours-bar"></canvas>
+              </div>
+              <div class="flex items-center gap-6 mt-4 text-sm text-slate-500">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-blue-500"></span>Pre-Planning</span>
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-amber-500"></span>Ad-Hoc</span>
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-purple-500"></span>Recurring</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── ASSIGNED TASKS & WORKFLOW BOARD (FULL WIDTH FOR SPACIOUS KANBAN) ── -->
+          <div id="dev-section-tasks" class="bg-white rounded-3xl border border-slate-200 shadow-card p-6 space-y-5 scroll-mt-24">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div class="flex items-center gap-3 flex-wrap">
+                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shadow-xs">
+                  <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-slate-900 leading-tight">Assigned Tasks</h3>
+                  <p class="text-xs text-slate-500 font-mono mt-0.5">Drag-and-drop workflow stages, active sprints, and task execution</p>
+                </div>
+                <!-- View Mode Switcher (Board, List, Grid) -->
+                <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200 ml-0 sm:ml-2">
+                  <button id="dev-view-btn-board" onclick="setDeveloperTaskViewMode('board')"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-blue-700 shadow-sm">
+                    <i class="fa-solid fa-table-columns"></i> <span>Board</span>
+                  </button>
+                  <button id="dev-view-btn-list" onclick="setDeveloperTaskViewMode('list')"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-list-check"></i> <span>List</span>
+                  </button>
+                  <button id="dev-view-btn-grid" onclick="setDeveloperTaskViewMode('grid')"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-grip"></i> <span>Grid</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Simple Clean Date Search -->
+              <div class="flex items-center gap-2">
+                <label for="dev-date-filter" class="text-xs font-bold text-slate-600 font-mono flex items-center gap-1.5 whitespace-nowrap">
+                  <i class="fa-regular fa-calendar text-blue-500"></i> Search Date:
+                </label>
+                <input type="date" id="dev-date-filter"
+                  class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all font-mono"
+                  onchange="applyDevDateFilter()">
+                <button onclick="clearDevDateFilter()" id="dev-date-clear-btn"
+                  class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold border border-slate-200 transition-all whitespace-nowrap">
+                  Show All
+                </button>
+              </div>
+            </div>
+
+            <!-- Category Tabs & Recurring Sub-filter -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-wrap">
+              <div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar flex-wrap">
+                <button onclick="filterDeveloperTasks('ALL')" id="dev-tab-ALL"
+                  class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200 shadow-sm transition-all whitespace-nowrap flex-shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span> All
+                  <span class="bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full text-[11px]" id="dev-count-ALL">0</span>
+                </button>
+                <button onclick="filterDeveloperTasks('PRE_PLANNING')" id="dev-tab-PRE_PLANNING"
+                  class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-600 text-xs font-medium border border-slate-200 hover:bg-slate-100 transition-all whitespace-nowrap flex-shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span> Pre-Planning
+                  <span class="bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[11px]" id="dev-count-PRE_PLANNING">0</span>
+                </button>
+                <button onclick="filterDeveloperTasks('AD_HOC_EMERGENCY')" id="dev-tab-AD_HOC_EMERGENCY"
+                  class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-600 text-xs font-medium border border-slate-200 hover:bg-slate-100 transition-all whitespace-nowrap flex-shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span> Ad-Hoc
+                  <span class="bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[11px]" id="dev-count-AD_HOC_EMERGENCY">0</span>
+                </button>
+                <button onclick="filterDeveloperTasks('RECURRING_ROUTINE')" id="dev-tab-RECURRING_ROUTINE"
+                  class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-600 text-xs font-medium border border-slate-200 hover:bg-slate-100 transition-all whitespace-nowrap flex-shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-purple-500"></span> Recurring
+                  <span class="bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[11px]" id="dev-count-RECURRING_ROUTINE">0</span>
+                </button>
+                <button onclick="filterDeveloperTasks('COMPLETED')" id="dev-tab-COMPLETED"
+                  class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-600 text-xs font-medium border border-slate-200 hover:bg-slate-100 transition-all whitespace-nowrap flex-shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Done
+                  <span class="bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[11px]" id="dev-count-COMPLETED">0</span>
+                </button>
+              </div>
+
+              <!-- Recurring Sub-filter -->
+              <div id="recurring-subfilter" class="hidden flex items-center gap-2">
+                <span class="text-xs text-slate-500 font-mono font-medium flex-shrink-0">Frequency:</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="setRecurringFilter('all')" id="rec-tab-all"
+                    class="px-2.5 py-1 rounded-lg text-xs bg-purple-50 text-purple-700 font-bold border border-purple-200 transition-all">All</button>
+                  <button onclick="setRecurringFilter('daily')" id="rec-tab-daily"
+                    class="px-2.5 py-1 rounded-lg text-xs bg-slate-50 text-slate-600 font-medium border border-slate-200 hover:bg-slate-100 transition-all">Daily</button>
+                  <button onclick="setRecurringFilter('weekly')" id="rec-tab-weekly"
+                    class="px-2.5 py-1 rounded-lg text-xs bg-slate-50 text-slate-600 font-medium border border-slate-200 hover:bg-slate-100 transition-all">Weekly</button>
+                  <button onclick="setRecurringFilter('monthly')" id="rec-tab-monthly"
+                    class="px-2.5 py-1 rounded-lg text-xs bg-slate-50 text-slate-600 font-medium border border-slate-200 hover:bg-slate-100 transition-all">Monthly</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task List Body (Spacious Kanban / Table / Grid) -->
+            <div id="dev-task-list-container" class="pt-2"></div>
+          </div>
+
+          <!-- ── BOTTOM ANALYTICS & LOG STREAM DECK (BALANCED 2x2 GRID) ── -->
+          <div id="dev-section-logs" class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start scroll-mt-24">
+
+            <!-- Card 1: Sprint Execution Progress -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-chart-pie text-blue-600"></i> Sprint Execution Progress
+                </h3>
+                <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200" id="sprint-ring-badge">63% Delivered</span>
+              </div>
+              <div class="flex items-center gap-5 pt-1">
+                <div class="relative w-24 h-24 flex-shrink-0">
+                  <canvas id="chart-sprint-ring"></canvas>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-xl font-extrabold text-slate-900 font-mono" id="sprint-ring-pct">0%</span>
+                  </div>
+                </div>
+                <div class="space-y-2 text-xs flex-1 font-mono">
+                  <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Total tasks</span><span class="font-bold text-slate-900" id="sprint-info-total">0</span></div>
+                  <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Completed</span><span class="font-bold text-emerald-600" id="sprint-info-done">0</span></div>
+                  <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Remaining</span><span class="font-bold text-rose-600" id="sprint-info-rem">0</span></div>
+                  <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Hours to deliver</span><span class="font-bold text-slate-900" id="sprint-info-hours">0h</span></div>
+                </div>
+              </div>
+
+              <!-- Type Breakdown -->
+              <div class="pt-3 border-t border-slate-100 space-y-2 text-xs font-mono" id="sprint-type-breakdown">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Card 2: Recurring Schedule -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-3.5">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-repeat text-purple-500"></i> Recurring Schedule
+                </h3>
+                <span class="text-xs text-purple-700 font-bold bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200 font-mono">8h/wk</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button onclick="setRecurringSidebarFilter('daily')" id="rec-sidebar-daily"
+                  class="flex-1 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 transition-all">Daily</button>
+                <button onclick="setRecurringSidebarFilter('weekly')" id="rec-sidebar-weekly"
+                  class="flex-1 py-1.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all">Weekly</button>
+                <button onclick="setRecurringSidebarFilter('monthly')" id="rec-sidebar-monthly"
+                  class="flex-1 py-1.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all">Monthly</button>
+              </div>
+              <div class="space-y-2.5 pt-1 max-h-[300px] overflow-y-auto pr-1" id="recurring-sidebar-list"></div>
+            </div>
+
+            <!-- Card 3: Work Log Stream -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-4" id="dev-worklogs-card">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-base text-slate-900 flex items-center gap-2" id="dev-worklogs-header">
+                    <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Work Log Stream
+                  </h3>
+                  <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono" id="dev-worklogs-count">0 entries</span>
+                </div>
+                <button onclick="clearSelectedTaskLogFilter()" id="dev-worklogs-all-btn" class="hidden text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                  View All
+                </button>
+              </div>
+
+              <!-- Selected Task Context Pill -->
+              <div id="dev-worklogs-task-pill" class="hidden p-3 rounded-2xl bg-blue-50/80 border border-blue-200 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 animate-pulse"></span>
+                  <span class="text-xs text-blue-900 font-bold truncate" id="dev-worklogs-task-name">Selected Task</span>
+                </div>
+                <button onclick="clearSelectedTaskLogFilter()" title="Show all task logs" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-2 py-0.5 rounded hover:bg-blue-100 transition-all flex-shrink-0">
+                  ✕ Reset
+                </button>
+              </div>
+
+              <div id="dev-worklogs-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Card 4: Upcoming Deadlines -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-3.5">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <i class="fa-regular fa-calendar-check text-indigo-500"></i> Upcoming Deadlines
+                </h3>
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono" id="dev-deadlines-count">Upcoming</span>
+              </div>
+              <div id="deadline-timeline" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SLIDE-OVER DRAWER: TASK WORK LOG INSPECTOR                       -->
+  <!-- Anchored to viewport to solve bottom-task visibility issues      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="drawer-task-logs" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="task-log-drawer-title">
+    <!-- Backdrop overlay with blur -->
+    <div onclick="closeTaskLogDrawer()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"></div>
+    
+    <!-- Off-canvas panel -->
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-6">
+      <div class="w-screen max-w-[480px] bg-white border-l border-slate-200 shadow-2xl flex flex-col animate-drawer">
+        
+        <!-- Drawer Header -->
+        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/90 flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base font-bold flex-shrink-0 shadow-xs border border-indigo-100">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap mb-1">
+                <span id="task-log-drawer-client" class="px-2 py-0.5 rounded text-xs font-mono font-bold uppercase bg-slate-200 text-slate-700">CLIENT</span>
+                <span id="task-log-drawer-type" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">Pre-Planning</span>
+                <span id="task-log-drawer-status" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">In Progress</span>
+              </div>
+              <h3 class="font-bold text-base text-slate-900 leading-snug truncate" id="task-log-drawer-title">Task Work Log</h3>
+              <p class="text-xs text-slate-500 font-mono mt-0.5" id="task-log-drawer-assignee">Assigned to: Developer</p>
+            </div>
+          </div>
+          <button onclick="closeTaskLogDrawer()" title="Close drawer (Esc)"
+            class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Drawer KPI / Quick Stats Strip -->
+        <div class="px-6 py-3.5 bg-white border-b border-slate-100 grid grid-cols-3 gap-3 text-xs font-mono">
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-slate-500 block text-xs uppercase font-bold">Estimated</span>
+            <span class="font-bold text-slate-800 text-sm" id="task-log-drawer-est">0.0h</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-indigo-50 border border-indigo-100">
+            <span class="text-indigo-600 block text-xs uppercase font-bold">Logged</span>
+            <span class="font-bold text-indigo-700 text-sm" id="task-log-drawer-logged">0.0h</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100">
+            <span class="text-emerald-600 block text-xs uppercase font-bold">Remaining</span>
+            <span class="font-bold text-emerald-700 text-sm" id="task-log-drawer-remaining">0.0h</span>
+          </div>
+        </div>
+
+        <!-- Drawer Body: Scrollable Log Stream -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="task-log-drawer-body">
+          <!-- Log entries rendered dynamically -->
+        </div>
+
+        <!-- Drawer Footer: Quick Log Hours Button -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+          <button onclick="closeTaskLogDrawer()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-all">
+            Close
+          </button>
+          <button id="task-log-drawer-add-btn" onclick="openLogTimeFromDrawer()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus text-[10px]"></i> Log Additional Hours
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DRAWER: DEV INSPECTOR                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="drawer-dev-inspector" class="fixed inset-0 z-50 hidden">
+    <div onclick="closeDevDrawer()" class="absolute inset-0 bg-black/30 transition-opacity"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-[440px] bg-white border-l border-slate-200 shadow-2xl flex flex-col animate-drawer">
+        <div class="p-6 flex-1 overflow-y-auto space-y-5">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white text-base shadow-sm" id="drawer-dev-avatar">AC</div>
+              <div>
+                <h3 class="font-bold text-base text-slate-900" id="drawer-dev-name">Alex Chen</h3>
+                <p class="text-sm text-slate-500" id="drawer-dev-role">Senior Backend Engineer</p>
+              </div>
+            </div>
+            <button onclick="closeDevDrawer()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors text-lg"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+            <div class="flex justify-between text-sm font-mono">
+              <span class="text-slate-500">Weekly Load</span>
+              <span class="text-slate-800 font-bold" id="drawer-dev-load">38.0 / 40.0h</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden flex" id="drawer-dev-bar"></div>
+            <div class="flex justify-between text-sm font-mono" id="drawer-dev-status"></div>
+          </div>
+          <div class="space-y-2.5">
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Assigned Tasks</h4>
+            <div class="space-y-2" id="drawer-dev-tasks"></div>
+          </div>
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Work Logs & Notes</h4>
+              <span class="text-[11px] font-mono text-slate-400" id="drawer-dev-logs-count">0 entries</span>
+            </div>
+            <div class="space-y-2" id="drawer-dev-worklogs"></div>
+          </div>
+          <div class="space-y-2.5">
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">Recurring</h4>
+            <div class="space-y-2 text-sm" id="drawer-dev-recurring"></div>
+          </div>
+        </div>
+        <div class="p-5 border-t border-slate-100 bg-slate-50/50">
+          <button id="drawer-assign-btn" onclick="openAssignFromDrawer()" class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition-colors">
+            + Assign Task
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- MODALS                                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- Task Assignment Modal -->
+  <div id="modal-assign" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-7 space-y-5 max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-3.5 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-slate-900 leading-tight">Pre-Flight Task Assignment</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Assign tasks to a single engineer, multiple developers, or an entire team.</p>
+          </div>
+        </div>
+        <button onclick="closeAssignModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-lg transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-4 text-sm overflow-y-auto pr-1 flex-1 no-scrollbar">
+        
+        <!-- ⚡ QUICK TASK TEMPLATE DROPDOWN BAR -->
+        <div class="flex items-center justify-between gap-3 p-2.5 px-3.5 bg-slate-50/90 rounded-xl border border-slate-200/90 shadow-2xs">
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold border border-indigo-100/80">
+              <i class="fa-solid fa-bolt"></i>
+            </span>
+            <span class="text-xs font-bold text-slate-700 font-mono uppercase tracking-wider">Template:</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <select id="assign-template-select" onchange="applyTaskTemplate(this.value)"
+              class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer">
+              <option value="">⚡ Select a 1-Click Task Template to auto-fill...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ROW 1: Task Title -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Task Title <span class="text-rose-500">*</span></label>
+          <input id="assign-title-input" type="text" value="Create Login API (OAuth2 + JWT)" placeholder="Enter task title or requirement..."
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all">
+        </div>
+
+        <!-- ROW 2: Assigned By & Task Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Assigned By <span class="text-rose-500">*</span></label>
+            <select id="assign-by-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="Marcus Vance (Project Manager)">Marcus Vance (Project Manager)</option>
+              <option value="David Miller (Tech Lead - Squad A)">David Miller (Tech Lead - Squad A)</option>
+              <option value="Sarah Jenkins (Tech Lead - Squad B)">Sarah Jenkins (Tech Lead - Squad B)</option>
+              <option value="Robert Chang (Tech Lead - Squad C)">Robert Chang (Tech Lead - Squad C)</option>
+              <option value="Elena Rostova (Tech Lead - Squad D)">Elena Rostova (Tech Lead - Squad D)</option>
+              <option value="Marcus Brody (Tech Lead - Squad E)">Marcus Brody (Tech Lead - Squad E)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Task Category <span class="text-rose-500">*</span></label>
+            <select id="assign-category-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="DEVELOPMENT" selected>💻 Development Task</option>
+              <option value="TESTING_QA">🧪 Testing & QA</option>
+              <option value="BUG_FIX">🐛 Bug Fix / Hotfix</option>
+              <option value="REPORTING">📊 Reporting & Docs</option>
+              <option value="UI_UX">🎨 UI/UX Design</option>
+              <option value="DEVOPS">⚙️ DevOps & Infra</option>
+              <option value="MEETING">👥 Architecture & Sync</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ROW 3: Workload Type & Estimated Hours -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Workload Type <span class="text-rose-500">*</span></label>
+            <select id="assign-type-select" onchange="toggleRecurringAssignmentFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="PRE_PLANNING" selected>Pre-Planning</option>
+              <option value="AD_HOC_EMERGENCY">Ad-Hoc Emergency</option>
+              <option value="RECURRING_ROUTINE">Recurring Routine</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Estimated Hours <span class="text-rose-500">*</span></label>
+            <input id="assign-hours-input" type="number" step="0.5" value="8" oninput="onAssignHoursChange()"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+          </div>
+        </div>
+
+        <div id="assign-recurrence-fields" class="hidden rounded-xl border border-purple-200 bg-purple-50/60 p-3.5">
+          <div class="flex items-center gap-2 mb-2.5 text-purple-800"><i class="fa-solid fa-repeat text-xs"></i><span class="text-xs font-bold uppercase tracking-wider font-mono">Recurring schedule</span></div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono" for="assign-recurrence-select">Repeat</label>
+          <select id="assign-recurrence-select" class="w-full bg-white border border-purple-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-100">
+            <option value="DAILY">Daily</option><option value="WEEKLY" selected>Weekly</option><option value="MONTHLY">Monthly</option>
+          </select>
+          <p class="mt-2 text-[11px] text-purple-700">This task will be marked with its repeat schedule in the task board.</p>
+        </div>
+
+        <!-- ROW 4: Priority & Due Date -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Priority</label>
+            <select id="assign-priority-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="P1_HIGH">P1 — Urgent Priority</option>
+              <option value="P2_MEDIUM" selected>P2 — Standard Priority</option>
+              <option value="P3_LOW">P3 — Low Priority</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Due Date</label>
+            <input id="assign-due-date-input" type="datetime-local" value="2026-09-06T18:00"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono font-medium outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- ASSIGNMENT TARGET: SEGMENTED MODE SELECTOR                      -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="pt-2 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="block text-slate-700 font-bold text-xs uppercase tracking-wider font-mono">
+              Assignment Target
+            </label>
+            <span class="text-xs text-slate-500 font-mono" id="assign-mode-helper">Select who will execute this task</span>
+          </div>
+
+          <!-- Mode Pills -->
+          <div class="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+            <button type="button" onclick="switchAssignMode('single')" id="assign-mode-btn-single"
+              class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm">
+              <i class="fa-solid fa-user"></i> Single Developer
+            </button>
+            <button type="button" onclick="switchAssignMode('multi')" id="assign-mode-btn-multi"
+              class="py-2 px-3 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-800 transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-users"></i> Multiple Devs
+            </button>
+            <button type="button" onclick="switchAssignMode('team')" id="assign-mode-btn-team"
+              class="py-2 px-3 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-800 transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-people-group"></i> Entire Team / Squad
+            </button>
+          </div>
+
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <!-- MODE 1: SINGLE DEVELOPER                                      -->
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <div id="assign-panel-single" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-600 font-medium mb-1 text-xs font-mono">Filter by Team / Squad</label>
+                <select id="assign-single-squad-filter" onchange="onSingleSquadFilterChange(this.value)"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium outline-none focus:border-blue-400">
+                  <!-- Populated dynamically with All Squads + squads -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-600 font-medium mb-1 text-xs font-mono">Assignee <span class="text-rose-500">*</span></label>
+                <select id="assign-dev-select" onchange="runAssignmentSimulation()"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 outline-none focus:border-blue-400">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div id="sim-audit-container" class="p-4 rounded-2xl border transition-all space-y-2"></div>
+          </div>
+
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <!-- MODE 2: MULTIPLE DEVELOPERS                                   -->
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <div id="assign-panel-multi" class="hidden space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-600 font-medium mb-1 text-xs font-mono">Filter by Squad</label>
+                <select id="assign-multi-squad-filter" onchange="onMultiSquadFilterChange(this.value)"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium outline-none focus:border-blue-400">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-600 font-medium mb-1 text-xs font-mono">Hour Distribution</label>
+                <select id="assign-multi-split-mode" onchange="onMultiSplitModeChange(this.value)"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 outline-none focus:border-blue-400">
+                  <option value="split">Divide hours evenly among developers</option>
+                  <option value="full">Assign full hours to each developer</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </div>
+                <input type="text" id="assign-multi-dev-search" placeholder="Search developers to add to this task..."
+                  oninput="filterMultiAssignDevList(this.value)"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-400 outline-none transition-all">
+              </div>
+
+              <div id="assign-multi-dev-list" class="max-h-40 overflow-y-auto space-y-1.5 p-2 bg-slate-50/70 border border-slate-200 rounded-2xl">
+                <!-- Checkbox list of developers -->
+              </div>
+            </div>
+
+            <div id="multi-sim-audit-container" class="p-4 rounded-2xl border transition-all space-y-2"></div>
+          </div>
+
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <!-- MODE 3: ENTIRE SQUAD / TEAM                                   -->
+          <!-- ───────────────────────────────────────────────────────────── -->
+          <div id="assign-panel-team" class="hidden space-y-3">
+            <div>
+              <label class="block text-slate-600 font-medium mb-1 text-xs font-mono">Select Target Squad / Team <span class="text-rose-500">*</span></label>
+              <select id="assign-team-squad-select" onchange="runTeamAssignmentSimulation()"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400">
+                <!-- Populated with squads -->
+              </select>
+            </div>
+
+            <div id="team-sim-audit-container" class="p-4 rounded-2xl border transition-all space-y-2.5">
+              <!-- Team capacity overview and lead info -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-3.5 border-t border-slate-100 flex-shrink-0">
+        <div class="text-xs text-slate-400 font-mono flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-check text-blue-500"></i> Pre-flight check simulates workload impact
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="closeAssignModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">
+            Cancel
+          </button>
+          <button id="btn-submit-task-assignment" onclick="submitNewTaskAssignment()" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md shadow-blue-200 transition-all flex items-center gap-2">
+            Confirm Assignment
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Log Time -->
+  <div id="modal-log-time" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-semibold text-lg text-slate-900 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-500"></i> Log Hours</h3>
+        <button onclick="closeLogTimeModal()" class="text-slate-400 hover:text-slate-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <input type="hidden" id="log-task-id">
+      <div class="space-y-4 text-sm">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-400 uppercase font-mono tracking-wider font-semibold">Active Task</span>
+            <span class="text-[11px] font-semibold text-blue-600 font-mono" id="log-modal-dev-name">Engineer: Alex Chen</span>
+          </div>
+          <span class="font-bold text-slate-800 text-sm block" id="log-modal-task-title">User Auth Middleware</span>
+        </div>
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs font-mono uppercase tracking-wider flex items-center justify-between">
+            <span>Hours Spent <span class="text-rose-500">*</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">1-Click Presets</span>
+          </label>
+          <input id="log-hours-input" type="number" step="0.5" value="2.0" min="0.25" max="24" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 font-mono font-bold text-sm outline-none focus:border-blue-400 focus:bg-white transition-all">
+          <div class="flex items-center gap-1.5 pt-2 flex-wrap">
+            <button type="button" onclick="applyQuickLogHours(0.5)" class="btn-time-preset">+30m</button>
+            <button type="button" onclick="applyQuickLogHours(1.0)" class="btn-time-preset">+1.0h</button>
+            <button type="button" onclick="applyQuickLogHours(2.0)" class="btn-time-preset">+2.0h</button>
+            <button type="button" onclick="applyQuickLogHours(4.0)" class="btn-time-preset">+4.0h</button>
+            <button type="button" onclick="applyQuickLogHours(8.0)" class="btn-time-preset">+8.0h (Full Day)</button>
+          </div>
+          <div id="log-hours-error" class="hidden form-error-hint"></div>
+        </div>
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs font-mono uppercase tracking-wider">Notes & Accomplishment <span class="text-rose-500">*</span></label>
+          <textarea id="log-notes-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all" rows="2" placeholder="Describe what was accomplished or unblocked..."></textarea>
+          <div id="log-notes-error" class="hidden form-error-hint"></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+        <button onclick="closeLogTimeModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Cancel</button>
+        <button onclick="submitTimeLog()" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm transition-colors">Submit Log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Team / Squad Modal -->
+  <div id="modal-create-squad" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-7 space-y-6 max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center text-xl shadow-md">
+            <i class="fa-solid fa-users-gear"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-xl text-slate-900 leading-tight">Create Engineering Team / Squad</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Define team focus, designate Tech Lead, and allocate engineers.</p>
+          </div>
+        </div>
+        <button onclick="closeCreateSquadModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-lg transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-5 text-sm overflow-y-auto pr-1 flex-1 no-scrollbar">
+        
+        <!-- Team Name & Focus -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Team / Squad Name <span class="text-rose-500">*</span></label>
+            <input id="create-squad-name" type="text" placeholder="e.g. Squad F (AI & Data Science)"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Domain / Specialty</label>
+            <input id="create-squad-focus" type="text" placeholder="e.g. LLM Ops, Machine Learning, Analytics"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Tech Lead & Color Theme -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Tech Lead / Squad Lead <span class="text-rose-500">*</span></label>
+            <select id="create-squad-lead" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Squad Brand Color</label>
+            <div class="flex items-center gap-2 pt-1 flex-wrap" id="create-squad-color-picker">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Members Selection -->
+        <div class="space-y-2 pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between">
+            <label class="block text-slate-700 font-bold text-xs uppercase tracking-wider font-mono">
+              Allocate Engineers to this Team
+            </label>
+            <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100" id="create-squad-member-badge">
+              0 selected (0h cap)
+            </span>
+          </div>
+
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </div>
+            <input type="text" id="create-squad-dev-search" placeholder="Filter engineers by name, role, or squad..."
+              oninput="filterCreateSquadDevList(this.value)"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-indigo-400 outline-none transition-all">
+          </div>
+
+          <div id="create-squad-dev-list" class="max-h-48 overflow-y-auto space-y-1.5 p-2 bg-slate-50/70 border border-slate-200 rounded-2xl">
+            <!-- Dynamically populated developer checklist -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-100 flex-shrink-0">
+        <div class="text-xs text-slate-400 font-mono flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-info text-indigo-500"></i> 40.0h capacity / engineer / sprint
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="closeCreateSquadModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">
+            Cancel
+          </button>
+          <button onclick="submitCreateSquad()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-bold shadow-md shadow-indigo-200 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-check"></i> Create Team
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Raise / Edit Blocker (Clean, Spacious SaaS Form) -->
+  <div id="modal-edit-blocker" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-7 space-y-5 max-h-[92vh] flex flex-col animate-drawer">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-3.5 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center text-xl shadow-xs">
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-slate-900 leading-tight" id="modal-blocker-title">Raise a Blocker</h3>
+            <p class="text-xs text-slate-500 mt-0.5" id="modal-blocker-subtitle">Report an impediment halting your work</p>
+          </div>
+        </div>
+        <button onclick="closeEditBlockerModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-lg transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-4 text-sm overflow-y-auto pr-1 flex-1 no-scrollbar">
+        <input type="hidden" id="edit-blocker-task-id" value="">
+        <input type="hidden" id="edit-blocker-severity" value="HIGH">
+
+        <!-- ⚡ QUICK BLOCKER PRESET DROPDOWN BAR -->
+        <div class="flex items-center justify-between gap-3 p-2.5 px-3.5 bg-slate-50/90 rounded-xl border border-slate-200/90 shadow-2xs">
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs font-bold border border-rose-100/80">
+              <i class="fa-solid fa-bolt"></i>
+            </span>
+            <span class="text-xs font-bold text-slate-700 font-mono uppercase tracking-wider">Preset:</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <select id="blocker-preset-select" onchange="applyBlockerPreset(this.value)"
+              class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all cursor-pointer">
+              <option value="">⚡ Select a 1-Click Blocker Preset to auto-fill...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ROW 1: Affected Task -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">
+            Affected Task <span class="text-rose-500">*</span>
+          </label>
+          <select id="modal-blocker-task-select" onchange="onBlockerTaskSelectChange(this.value)"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-900 outline-none focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all cursor-pointer">
+            <option value="">Select task...</option>
+          </select>
+          <div id="modal-blocker-task-context" class="mt-2 flex items-center gap-2 text-xs font-mono text-slate-500 hidden">
+            <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 text-[10px]" id="modal-blocker-context-badge">PROJECT</span>
+            <span id="modal-blocker-context-dev" class="text-slate-600 font-semibold">Assigned Dev</span>
+            <span class="text-slate-300">•</span>
+            <span id="modal-blocker-context-hours" class="text-slate-500">8h budget</span>
+          </div>
+        </div>
+
+        <!-- ROW 2: Blocker Category & Severity -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">
+              Blocker Category <span class="text-rose-500">*</span>
+            </label>
+            <select id="edit-blocker-category-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all">
+              <option value="TECHNICAL_IMPEDIMENT" selected>💻 Technical Issue</option>
+              <option value="CLIENT_DEPENDENCY">🔑 Client / External Dependency</option>
+              <option value="REVIEW_BOTTLENECK">👥 Review Bottleneck</option>
+              <option value="RESOURCE_CAPACITY">⚡ Resource / Capacity Issue</option>
+              <option value="SCOPE_CREEP">📝 Scope Expansion / Ambiguity</option>
+              <option value="INFRASTRUCTURE">⚙️ Environment / Infrastructure</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">
+              Severity <span class="text-rose-500">*</span>
+            </label>
+            <select id="edit-blocker-severity-select" onchange="onBlockerSeveritySelectChange(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all">
+              <option value="CRITICAL_BLOCKER" selected>🔴 Critical Blocker — Completely halts work</option>
+              <option value="HIGH_DELIVERY_RISK">🛡️ High Delivery Risk — Impeding progress / timeline at risk</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Notice Alert Box -->
+        <div class="p-3 bg-rose-50/70 border border-rose-200/80 rounded-xl flex items-center gap-2.5 text-rose-700 text-xs font-medium">
+          <div class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs flex-shrink-0 font-bold">
+            <i class="fa-solid fa-circle-exclamation"></i>
+          </div>
+          <span>Task status will automatically change to <strong class="font-bold text-rose-900">BLOCKED</strong> and your active timer will be stopped.</span>
+        </div>
+
+        <!-- ROW 3: Blocker Description -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">
+            Blocker Description <span class="text-rose-500">*</span>
+          </label>
+          <textarea id="edit-blocker-reason-text" rows="3" placeholder="Describe what is blocking you in detail. Be specific about the exact issue."
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm text-slate-900 font-medium focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none placeholder:text-slate-400 leading-relaxed"></textarea>
+        </div>
+
+        <!-- ROW 4: Business Impact -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">
+            Business Impact <span class="text-rose-500">*</span>
+          </label>
+          <textarea id="edit-blocker-impact-text" rows="2" placeholder="Describe the impact on delivery — e.g. 'Cannot proceed with integration testing, sprint deadline at risk.'"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm text-slate-900 font-medium focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none placeholder:text-slate-400 leading-relaxed"></textarea>
+        </div>
+
+        <!-- ROW 5: Resolution Date & Mitigation Plan -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Expected Resolution Date</label>
+            <input id="edit-blocker-resolution-date" type="date" value="2026-09-11"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono font-medium outline-none focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100">
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1.5 text-xs uppercase tracking-wider font-mono">Concrete Mitigation Plan</label>
+            <input id="edit-blocker-mitigation" type="text" placeholder="Action being taken (e.g. PM escalated with client)"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium outline-none focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-100">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between flex-shrink-0">
+        <div>
+          <button id="modal-blocker-resolve-btn" type="button" onclick="resolveBlockerFromModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors flex items-center gap-1.5 hidden">
+            <i class="fa-solid fa-check"></i> Mark Resolved
+          </button>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="closeEditBlockerModal()" class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition-colors">
+            Cancel
+          </button>
+          <button type="button" onclick="saveBlockerReason()" id="modal-blocker-submit-btn" class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 border border-rose-200 text-sm font-bold shadow-xs transition-all flex items-center gap-2">
+            <i class="fa-regular fa-circle-stop text-rose-500"></i> <span id="modal-blocker-submit-text">Raise Blocker</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Add / Onboard & Edit Developer -->
+  <div id="modal-create-developer" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-7 space-y-5 max-h-[90vh] flex flex-col animate-drawer">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-600 text-white flex items-center justify-center text-lg shadow-md flex-shrink-0">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-slate-900 leading-tight" id="modal-create-dev-title">Onboard New Developer</h3>
+            <p class="text-xs text-slate-500 font-mono mt-0.5" id="modal-create-dev-subtitle">Configure engineer profile, squad allocation, and weekly capacity</p>
+          </div>
+        </div>
+        <button onclick="closeCreateDeveloperModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-4 text-sm overflow-y-auto pr-1 flex-1 no-scrollbar">
+        <input type="hidden" id="create-dev-id" value="">
+
+        <!-- Name & Email -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Full Name <span class="text-rose-500">*</span></label>
+            <input id="create-dev-name" type="text" placeholder="e.g. Sophia Vance"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition-all">
+            <div id="create-dev-name-error" class="hidden form-error-hint"></div>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Internal Email</label>
+            <input id="create-dev-email" type="email" placeholder="e.g. sophia.v@workdash.internal"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-mono focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition-all">
+            <div id="create-dev-email-error" class="hidden form-error-hint"></div>
+          </div>
+        </div>
+
+        <!-- Squad Assignment & Seniority Level -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Assigned Squad / Team <span class="text-rose-500">*</span></label>
+            <select id="create-dev-squad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Seniority / Level</label>
+            <select id="create-dev-seniority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+              <option value="Senior Engineer">Senior Engineer (L3)</option>
+              <option value="Mid-Level Engineer">Mid-Level Engineer (L2)</option>
+              <option value="Junior Engineer">Junior Engineer (L1)</option>
+              <option value="Staff Engineer">Staff Engineer (L4)</option>
+              <option value="Principal Engineer">Principal Engineer (L5)</option>
+              <option value="Tech Lead">Tech Lead</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Technical Role & Quick Presets -->
+        <div class="space-y-1.5">
+          <label class="block text-slate-700 font-bold text-xs uppercase tracking-wider font-mono">Primary Technical Role <span class="text-rose-500">*</span></label>
+          <input id="create-dev-role" type="text" placeholder="e.g. Senior React Architect, Go Microservices Specialist"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition-all">
+          <div id="create-dev-role-error" class="hidden form-error-hint"></div>
+          
+          <!-- Quick Role Preset Chips -->
+          <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <span class="text-[10px] text-slate-400 font-mono">Quick-fill:</span>
+            <button type="button" onclick="setQuickDevRole('Senior React Architect', 6.0, 'React, TypeScript, Next.js, Tailwind')"
+              class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-medium transition-colors">🎨 Frontend React</button>
+            <button type="button" onclick="setQuickDevRole('Senior Backend & API Engineer', 7.0, 'Node.js, Go, PostgreSQL, Redis, gRPC')"
+              class="px-2 py-0.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-medium transition-colors">💻 Backend API</button>
+            <button type="button" onclick="setQuickDevRole('Lead Mobile Developer (iOS/Android)', 6.0, 'Swift, Kotlin, React Native, Mobile CI/CD')"
+              class="px-2 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-medium transition-colors">📱 Mobile Dev</button>
+            <button type="button" onclick="setQuickDevRole('Cloud Platform & Kubernetes SRE', 8.0, 'Kubernetes, AWS, Terraform, Docker, Datadog')"
+              class="px-2 py-0.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 text-[10px] font-medium transition-colors">☁️ Cloud / SRE</button>
+            <button type="button" onclick="setQuickDevRole('QA Automation Lead (Playwright/k6)', 6.0, 'Playwright, Cypress, k6, Jest, API Testing')"
+              class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 text-[10px] font-medium transition-colors">🧪 QA Automation</button>
+          </div>
+        </div>
+
+        <!-- Weekly Capacity & Recurring Overhead -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Weekly Total Hours <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <input id="create-dev-capacity" type="number" step="1" value="40" min="10" max="60"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-xs font-mono font-bold text-slate-900 focus:bg-white focus:border-indigo-400 outline-none">
+              <span class="absolute right-3 top-2.5 text-xs font-mono text-slate-400">h</span>
+            </div>
+            <div id="create-dev-capacity-error" class="hidden form-error-hint"></div>
+            <span class="text-[10px] text-slate-400 font-mono mt-0.5 block">Standard full-time is 40.0h</span>
+          </div>
+
+          <div>
+            <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Recurring Meeting Overhead</label>
+            <div class="relative">
+              <input id="create-dev-recurring" type="number" step="0.5" value="6.0" min="0" max="20"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-xs font-mono font-bold text-purple-700 focus:bg-white focus:border-indigo-400 outline-none">
+              <span class="absolute right-3 top-2.5 text-xs font-mono text-purple-400">h</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono mt-0.5 block">Standups, planning, & syncs</span>
+          </div>
+        </div>
+
+        <!-- Skills / Tags -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-1 text-xs uppercase tracking-wider font-mono">Skills & Tech Stack Tags</label>
+          <input id="create-dev-skills" type="text" placeholder="e.g. React, TypeScript, Node.js, AWS, PostgreSQL, GraphQL"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition-all">
+          <span class="text-[10px] text-slate-400 font-mono mt-0.5 block">Comma-separated tags for smart skill matching</span>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-100 flex-shrink-0">
+        <div class="text-xs text-slate-400 font-mono flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-check text-indigo-500"></i> Auto-updates squad capacity and manager metrics
+        </div>
+        <div class="flex items-center gap-2.5">
+          <button onclick="closeCreateDeveloperModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
+            Cancel
+          </button>
+          <button onclick="submitCreateDeveloper()" id="btn-submit-create-dev" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-200 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-check"></i> Save Developer
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit Task Template -->
+  <div id="modal-template-editor" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <div class="template-editor-icon w-10 h-10 rounded-xl flex items-center justify-center text-indigo-700 flex-shrink-0"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <div>
+            <h3 id="template-editor-title" class="text-lg font-extrabold text-slate-900">New task template</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Create a repeatable blueprint for faster, safer assignment.</p>
+          </div>
+        </div>
+        <button onclick="closeTemplateEditor()" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <input type="hidden" id="template-editor-id">
+        <div>
+          <label class="template-form-label">Template name <span>*</span></label>
+          <input id="template-editor-name" type="text" placeholder="e.g. API Feature Delivery" class="w-full">
+        </div>
+        <div>
+          <label class="template-form-label">Task title <span>*</span></label>
+          <input id="template-editor-task-title" type="text" placeholder="e.g. Implement authenticated API endpoint" class="w-full">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="template-form-label">Category</label><select id="template-editor-category" class="w-full">
+            <option value="DEVELOPMENT">Development</option><option value="TESTING_QA">Testing & QA</option><option value="BUG_FIX">Bug Fix</option><option value="REPORTING">Reporting</option><option value="UI_UX">UI/UX</option><option value="DEVOPS">DevOps</option><option value="MEETING">Architecture & Sync</option>
+          </select></div>
+          <div><label class="template-form-label">Workload type</label><select id="template-editor-type" onchange="toggleRecurringTemplateFields()" class="w-full">
+            <option value="PRE_PLANNING">Pre-Planning</option><option value="AD_HOC_EMERGENCY">Ad-Hoc Emergency</option><option value="RECURRING_ROUTINE">Recurring Routine</option>
+          </select></div>
+        </div>
+        <div id="template-editor-recurrence-fields" class="hidden">
+          <label class="template-form-label">Recurring schedule</label>
+          <select id="template-editor-recurrence" class="w-full"><option value="DAILY">Daily</option><option value="WEEKLY" selected>Weekly</option><option value="MONTHLY">Monthly</option></select>
+          <p class="mt-1.5 text-[11px] text-slate-500">This schedule will be applied whenever the template is used.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="template-form-label">Estimated hours</label><input id="template-editor-hours" type="number" min="0.5" step="0.5" value="4" class="w-full"></div>
+          <div><label class="template-form-label">Priority</label><select id="template-editor-priority" class="w-full"><option value="P1_HIGH">P1 - Urgent</option><option value="P2_MEDIUM" selected>P2 - Standard</option><option value="P3_LOW">P3 - Low</option></select></div>
+        </div>
+        <div><label class="template-form-label">Default due date</label><input id="template-editor-due-date" type="datetime-local" class="w-full"></div>
+        <div id="template-editor-error" class="hidden template-form-error"></div>
+      </div>
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+        <button onclick="closeTemplateEditor()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-100">Cancel</button>
+        <button id="template-editor-submit" onclick="saveTemplateEditor()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-200 flex items-center gap-2"><i class="fa-solid fa-check"></i><span>Save template</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette -->
+  <div id="modal-command-palette" class="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-[15vh] p-4 hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden">
+      <div class="p-4 flex items-center gap-3 border-b border-slate-100">
+        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+        <input type="text" id="cmd-input" placeholder="Search developers, clients, or actions..."
+          oninput="handleCommandPaletteSearch(this.value)"
+          class="w-full bg-transparent text-base text-slate-900 placeholder-slate-400 outline-none">
+        <kbd class="text-xs font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">ESC</kbd>
+      </div>
+      <div class="p-2 max-h-80 overflow-y-auto text-sm" id="cmd-results"></div>
+      <div class="p-3 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 font-mono flex items-center justify-between">
+        <span><kbd class="bg-white border border-slate-200 px-1.5 rounded">↑↓</kbd> navigate · <kbd class="bg-white border border-slate-200 px-1.5 rounded">↵</kbd> select</span>
+        <span>WorkDashboard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="app-toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 shadow-2xl rounded-2xl px-5 py-3.5 flex items-center gap-3 text-sm text-white max-w-sm pointer-events-none opacity-0">
+    <div class="h-7 w-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-check"></i></div>
+    <div id="toast-message" class="font-medium leading-snug">Done.</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

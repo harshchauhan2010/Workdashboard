@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Fonts */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Canvas & Surfaces */
+  --color-bg-canvas: #F7F6F5;
+  --color-bg-subtle: #F0EEEA;
+  --color-surface: #ffffff;
+  --color-surface-hover: #F8F8F8;
+  --color-surface-active: #F5F5F4;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Borders */
+  --color-border: #E7E2DA;
+  --color-border-subtle: #F0EEEA;
+  --color-border-hover: #D0C8BE;
+  --color-border-focus: #285691;
+
+  /* Typography */
+  --color-text-primary: #201C17;
+  --color-text-secondary: #4A4239;
+  --color-text-muted: #7B7265;
+  --color-text-tertiary: #A49A8B;
+
+  /* Brand Colors */
+  --color-primary: #285691;
+  --color-primary-hover: #1F4373;
+  --color-primary-light: #EEF3FB;
+  --color-primary-border: #B6CFEC;
+
+  /* Status Colors */
+  --color-success: #326A47;
+  --color-warning: #97621C;
+  --color-danger: #8E3722;
+  --color-info: #2A6A7F;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glass & Card Effects */
+.card-shadow {
+  box-shadow: 0 1px 2px 0 rgba(30, 25, 23, 0.04), 0 4px 14px -7px rgba(30, 25, 23, 0.07);
+}
+
+.elevated-shadow {
+  box-shadow: 0 14px 30px -12px rgba(30, 25, 23, 0.12), 0 4px 10px -6px rgba(30, 25, 23, 0.04);
+}
+
+/* Subtle dot-matrix background pattern matching the reference */
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(32, 28, 23, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Smooth Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Shimmer Loading Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #F5F5F4 25%, #EBE8E3 50%, #F5F5F4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
 }
