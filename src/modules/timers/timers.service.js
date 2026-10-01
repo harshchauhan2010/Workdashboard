@@ -52,16 +52,6 @@ export async function startTimer(authUserId, payload) {
     throw new Error("User not found");
   }
 
-  // Enforce 1 active timer per developer
-  const existingTimer = await timersRepo.findByUserId(user.id);
-  if (existingTimer) {
-    const error = new Error(
-      `You already have an active timer on task: "${existingTimer.task_title}". Stop it before starting a new one.`
-    );
-    error.statusCode = 409;
-    throw error;
-  }
-
   // Verify task exists
   const task = await tasksRepo.findById(payload.task_id);
   if (!task) {
@@ -82,10 +72,50 @@ export async function startTimer(authUserId, payload) {
     throw error;
   }
 
-  return await timersRepo.startTimer({
+  // Check if developer already has an active timer
+  const existingTimer = await timersRepo.findByUserId(user.id);
+  if (existingTimer) {
+    if (existingTimer.task_id === payload.task_id) {
+      // If timer is on the exact same task, resume it
+      const updated = await timersRepo.updateTimer(user.id, {
+        secondsElapsed: existingTimer.seconds_elapsed,
+        isRunning: true,
+      });
+      return {
+        ...updated,
+        task_title: task.title,
+        task_id: task.id,
+      };
+    }
+
+    // If switching to a different task:
+    // Auto-log previous timer's work if > 0 seconds elapsed
+    if (existingTimer.seconds_elapsed > 0) {
+      const hours = Math.max(0.01, Math.round((existingTimer.seconds_elapsed / 3600) * 100) / 100);
+      try {
+        await workLogsRepo.createWorkLog({
+          taskId: existingTimer.task_id,
+          userId: user.id,
+          hours,
+          notes: `Auto-saved session from previous timer on: ${existingTimer.task_title || "Sprint Task"}`,
+        });
+      } catch (logErr) {
+        console.warn("[timers.service.startTimer] Warning: Failed to auto-log previous timer:", logErr);
+      }
+    }
+    await timersRepo.deleteTimer(user.id);
+  }
+
+  const created = await timersRepo.startTimer({
     userId: user.id,
     taskId: task.id,
   });
+
+  return {
+    ...created,
+    task_title: task.title,
+    task_id: task.id,
+  };
 }
 
 // Pause running timer
@@ -102,9 +132,11 @@ export async function pauseTimer(authUserId, payload = {}) {
 
   const existingTimer = await timersRepo.findByUserId(user.id);
   if (!existingTimer) {
-    const error = new Error("No active timer found to pause");
-    error.statusCode = 404;
-    throw error;
+    // If no active timer in DB, return graceful response
+    return {
+      message: "No active timer found in database to pause",
+      is_running: false,
+    };
   }
 
   const secondsElapsed =
@@ -127,9 +159,11 @@ export async function resumeTimer(authUserId, payload = {}) {
 
   const existingTimer = await timersRepo.findByUserId(user.id);
   if (!existingTimer) {
-    const error = new Error("No active timer found to resume");
-    error.statusCode = 404;
-    throw error;
+    // If no active timer in DB, return graceful response
+    return {
+      message: "No active timer found in database to resume",
+      is_running: true,
+    };
   }
 
   if (existingTimer.is_blocked) {
@@ -162,38 +196,55 @@ export async function stopTimer(authUserId, payload = {}) {
   }
 
   const existingTimer = await timersRepo.findByUserId(user.id);
-  if (!existingTimer) {
-    const error = new Error("No active timer found to stop");
-    error.statusCode = 404;
+  
+  let targetTaskId = existingTimer?.task_id || payload.task_id || payload.taskId;
+  let taskTitle = existingTimer?.task_title || payload.task_title || payload.taskTitle || "Sprint Task";
+
+  // Fallback: If no task ID was provided or bound, find the developer's assigned tasks
+  if (!targetTaskId) {
+    const userTasks = await tasksRepo.findAssignedTasks(user.id);
+    if (userTasks && userTasks.length > 0) {
+      targetTaskId = userTasks[0].id;
+      taskTitle = userTasks[0].title;
+    }
+  }
+
+  if (!targetTaskId) {
+    const error = new Error("No task specified to log hours against");
+    error.statusCode = 400;
     throw error;
   }
 
   const totalSeconds =
     payload.seconds_elapsed !== undefined
       ? Number(payload.seconds_elapsed)
-      : existingTimer.seconds_elapsed;
+      : (existingTimer?.seconds_elapsed || 0);
 
   // Convert seconds to decimal hours (minimum 0.01 hours for non-zero time)
   let hours = 0.01;
   if (totalSeconds > 0) {
     hours = Math.max(0.01, Math.round((totalSeconds / 3600) * 100) / 100);
+  } else if (payload.hours) {
+    hours = Number(payload.hours);
   }
 
   const notes =
     payload.notes && payload.notes.trim().length > 0
       ? payload.notes.trim()
-      : `Stopwatch session on task: ${existingTimer.task_title}`;
+      : `Stopwatch session on task: ${taskTitle}`;
 
-  // 1. Insert completed work log
+  // 1. Insert completed work log into PostgreSQL workdash.work_logs
   const workLog = await workLogsRepo.createWorkLog({
-    taskId: existingTimer.task_id,
+    taskId: targetTaskId,
     userId: user.id,
     hours,
     notes,
   });
 
-  // 2. Delete temporary active timer
-  await timersRepo.deleteTimer(user.id);
+  // 2. Delete temporary active timer if it existed
+  if (existingTimer) {
+    await timersRepo.deleteTimer(user.id);
+  }
 
   return {
     message: "Timer stopped and work logged successfully",
@@ -212,9 +263,7 @@ export async function discardTimer(authUserId, explicitUserId = null) {
 
   const existingTimer = await timersRepo.findByUserId(user.id);
   if (!existingTimer) {
-    const error = new Error("No active timer found to discard");
-    error.statusCode = 404;
-    throw error;
+    return { message: "No active timer to discard" };
   }
 
   return await timersRepo.deleteTimer(user.id);

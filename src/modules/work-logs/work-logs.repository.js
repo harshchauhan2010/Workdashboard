@@ -1,5 +1,59 @@
 import pool from "@/lib/db";
 
+// Find all work logs with filters (developer/user, task, squad, date)
+export async function findAll(filters = {}) {
+  let query = `
+    SELECT 
+      wl.*,
+      u.full_name,
+      u.email,
+      u.role_title,
+      t.title AS task_title,
+      t.category AS task_category,
+      t.priority AS task_priority,
+      t.task_type,
+      t.squad_id,
+      COALESCE(s.badge_code, 'ALPHA') AS squad_badge_code,
+      s.name AS squad_name
+    FROM workdash.work_logs wl
+    JOIN workdash.users u ON wl.user_id = u.id
+    JOIN workdash.tasks t ON wl.task_id = t.id
+    LEFT JOIN workdash.squads s ON t.squad_id = s.id
+    WHERE 1=1
+  `;
+  const params = [];
+
+  if (filters.userId) {
+    params.push(filters.userId);
+    query += ` AND wl.user_id = $${params.length}`;
+  }
+
+  if (filters.taskId) {
+    params.push(filters.taskId);
+    query += ` AND wl.task_id = $${params.length}`;
+  }
+
+  if (filters.fromDate) {
+    params.push(filters.fromDate);
+    query += ` AND wl.log_timestamp >= $${params.length}`;
+  }
+
+  if (filters.toDate) {
+    params.push(filters.toDate);
+    query += ` AND wl.log_timestamp <= $${params.length}`;
+  }
+
+  query += ` ORDER BY wl.log_timestamp DESC`;
+
+  if (filters.limit) {
+    params.push(filters.limit);
+    query += ` LIMIT $${params.length}`;
+  }
+
+  const result = await pool.query(query, params);
+  return result.rows;
+}
+
 // Find all work logs for a specific task
 export async function findByTaskId(taskId) {
   const result = await pool.query(

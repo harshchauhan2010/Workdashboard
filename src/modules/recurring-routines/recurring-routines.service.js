@@ -9,7 +9,7 @@ import {
 } from "./recurring-routines.validator.js";
 
 // Helper to resolve user from auth context (Clerk ID or DB user ID)
-async function resolveDbUser(authUserId, explicitUserId = null) {
+export async function resolveDbUser(authUserId, explicitUserId = null) {
   if (explicitUserId && isValidUUID(explicitUserId)) {
     const explicit = await usersRepo.findById(explicitUserId);
     if (explicit) return explicit;
@@ -81,6 +81,47 @@ export async function getRoutineById(id) {
   }
 
   return routine;
+}
+
+/**
+ * Log work hours directly on a routine
+ */
+export async function logRoutineHours(authUserId, routineId, payload = {}) {
+  if (!isValidUUID(routineId)) {
+    const error = new Error("Invalid routine ID format");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const user = await resolveDbUser(authUserId, payload.user_id);
+  if (!user) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const routine = await routinesRepo.findById(routineId);
+  if (!routine) {
+    const error = new Error("Recurring routine not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const hours = Number(payload.hours) || (routine.frequency === "DAILY" ? 0.5 : 1.0);
+  const notes = payload.notes || `Completed ${routine.frequency.toLowerCase()} routine: ${routine.title}`;
+
+  const workLog = await routinesRepo.logRoutineTime({
+    userId: user.id,
+    routineId,
+    hours,
+    notes,
+  });
+
+  return {
+    message: `Logged ${hours}h for ${routine.title}`,
+    work_log: workLog,
+    routine_id: routineId,
+  };
 }
 
 /**

@@ -22,16 +22,16 @@ WorkDashboard is designed with a sleek, modern, enterprise dark theme featuring 
 
 ---
 
-## 2. Screen Architecture & Role Views
+## 2. Screen Architecture & Role Views (Auth & Database-Driven)
 
 ```
                         ┌───────────────────────────────┐
                         │   WorkDashboard Top Navbar    │
-                        │ [Logo] [Role Switcher] [User] │
+                        │ [Logo] [Sprint Picker] [User] │
                         └───────────────┬───────────────┘
-                                        │
+                                        │ (Auto-routed by db user.system_role)
              ┌──────────────────────────┴──────────────────────────┐
-             ▼                                                     ▼
+             ▼ (If system_role === 'MANAGER')                      ▼ (If system_role === 'DEVELOPER')
 ┌─────────────────────────┐                             ┌─────────────────────────┐
 │ Manager Command Center  │                             │   Developer Workspace   │
 ├─────────────────────────┤                             ├─────────────────────────┤

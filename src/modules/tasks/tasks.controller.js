@@ -26,6 +26,21 @@ export async function listTasksController(request) {
     if (searchParams.get("assigned_user_id")) {
       filters.assigned_user_id = searchParams.get("assigned_user_id");
     }
+    if (searchParams.get("due_date")) {
+      filters.due_date = searchParams.get("due_date");
+    }
+    if (searchParams.get("date")) {
+      filters.date = searchParams.get("date");
+    }
+    if (searchParams.get("from_date")) {
+      filters.from_date = searchParams.get("from_date");
+    }
+    if (searchParams.get("to_date")) {
+      filters.to_date = searchParams.get("to_date");
+    }
+    if (searchParams.get("search")) {
+      filters.search = searchParams.get("search");
+    }
     if (searchParams.get("is_blocked") !== null) {
       const blockedVal = searchParams.get("is_blocked");
       if (blockedVal === "true") filters.is_blocked = true;

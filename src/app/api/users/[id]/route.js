@@ -19,6 +19,13 @@ export async function PATCH(request, context) {
 }
 
 /**
+ * PUT /api/users/:id - Update user profile fields
+ */
+export async function PUT(request, context) {
+  return updateUserController(request, context);
+}
+
+/**
  * DELETE /api/users/:id - Soft-delete / deactivate user profile
  */
 export async function DELETE(request, context) {

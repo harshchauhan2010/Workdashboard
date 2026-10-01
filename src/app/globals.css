@@ -1,33 +1,147 @@
 @import "tailwindcss";
 
+@theme {
+  --color-slate-50: #F8F7F4;
+  --color-slate-100: #F1EFE9;
+  --color-slate-200: #E4E0D8;
+  --color-slate-300: #D0CABE;
+  --color-slate-400: #A9A192;
+  --color-slate-500: #847B6C;
+  --color-slate-600: #665D4F;
+  --color-slate-700: #4A423A;
+  --color-slate-800: #312A24;
+  --color-slate-900: #1E1917;
+  --color-slate-950: #120F0D;
+
+  --color-blue-50: #EEF3FB;
+  --color-blue-100: #DCE7F6;
+  --color-blue-200: #B6CFEC;
+  --color-blue-300: #8AB1DE;
+  --color-blue-400: #5C8FCB;
+  --color-blue-500: #3A6FB0;
+  --color-blue-600: #285691;
+  --color-blue-700: #1F4373;
+  --color-blue-800: #1A3559;
+  --color-blue-900: #172C48;
+  --color-blue-950: #0E1B2E;
+
+  --color-indigo-50: #F2EFFB;
+  --color-indigo-100: #E4DEF5;
+  --color-indigo-200: #C9BDEB;
+  --color-indigo-300: #A996DC;
+  --color-indigo-400: #8871C8;
+  --color-indigo-500: #6E54AF;
+  --color-indigo-600: #574092;
+  --color-indigo-700: #453275;
+  --color-indigo-800: #37285D;
+  --color-indigo-900: #2B1F49;
+  --color-indigo-950: #1A122E;
+
+  --color-emerald-50: #EEF6F0;
+  --color-emerald-100: #D9EBDD;
+  --color-emerald-200: #B3D7BE;
+  --color-emerald-300: #86BC98;
+  --color-emerald-400: #5C9E74;
+  --color-emerald-500: #3F8258;
+  --color-emerald-600: #326A47;
+  --color-emerald-700: #2A5539;
+  --color-emerald-800: #1F4029;
+  --color-emerald-900: #16301F;
+  --color-emerald-950: #0D1F13;
+
+  --color-amber-50: #FBF3E7;
+  --color-amber-100: #F5E4C4;
+  --color-amber-200: #EBC988;
+  --color-amber-300: #DFAD57;
+  --color-amber-400: #CE9339;
+  --color-amber-500: #B87A26;
+  --color-amber-600: #97621C;
+  --color-amber-700: #794E18;
+  --color-amber-800: #5C3B13;
+  --color-amber-900: #452C0F;
+  --color-amber-950: #281A09;
+
+  --color-rose-50: #FBEEEC;
+  --color-rose-100: #F5D8D3;
+  --color-rose-200: #E9B2A8;
+  --color-rose-300: #DA8677;
+  --color-rose-400: #C75F4C;
+  --color-rose-500: #AE452F;
+  --color-rose-600: #8E3722;
+  --color-rose-700: #712C1B;
+  --color-rose-800: #582316;
+  --color-rose-900: #421A11;
+  --color-rose-950: #280F0A;
+
+  --color-purple-50: #F4EFF9;
+  --color-purple-100: #E7DBF1;
+  --color-purple-200: #CDB4E3;
+  --color-purple-300: #B08BD2;
+  --color-purple-400: #9367BE;
+  --color-purple-500: #7A4CA6;
+  --color-purple-600: #623C87;
+  --color-purple-700: #4E306C;
+  --color-purple-800: #3D2554;
+  --color-purple-900: #2E1C40;
+  --color-purple-950: #1C1128;
+
+  --color-teal-50: #ECF6F5;
+  --color-teal-100: #D3EBE8;
+  --color-teal-200: #A6D6D0;
+  --color-teal-300: #75BDB4;
+  --color-teal-400: #4CA095;
+  --color-teal-500: #35837A;
+  --color-teal-600: #2A6961;
+  --color-teal-700: #22544D;
+  --color-teal-800: #1A413B;
+  --color-teal-900: #14312C;
+  --color-teal-950: #0B1D1A;
+
+  --color-cyan-50: #EDF6F9;
+  --color-cyan-100: #D3EBF1;
+  --color-cyan-200: #A7D7E3;
+  --color-cyan-300: #78BDCF;
+  --color-cyan-400: #4FA1B8;
+  --color-cyan-500: #35849C;
+  --color-cyan-600: #2A6A7F;
+  --color-cyan-700: #235567;
+  --color-cyan-800: #1B4250;
+  --color-cyan-900: #15323D;
+  --color-cyan-950: #0C1E25;
+
+  --font-sans: 'Inter', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Sora', var(--font-sora), var(--font-inter), sans-serif;
+  --font-mono: 'JetBrains Mono', var(--font-mono-local), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 :root {
   /* Fonts */
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-sora), var(--font-inter), sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Inter', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Sora', var(--font-sora), var(--font-inter), sans-serif;
+  --font-mono: 'JetBrains Mono', var(--font-mono-local), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Canvas & Surfaces */
-  --color-bg-canvas: #F7F6F5;
-  --color-bg-subtle: #F0EEEA;
+  --color-bg-canvas: #F8F7F4;
+  --color-bg-subtle: #F1EFE9;
   --color-surface: #ffffff;
   --color-surface-hover: #F8F8F8;
   --color-surface-active: #F5F5F4;
 
   /* Borders */
-  --color-border: #E7E2DA;
-  --color-border-subtle: #F0EEEA;
-  --color-border-hover: #D0C8BE;
-  --color-border-focus: #285691;
+  --color-border: #E4E0D8;
+  --color-border-subtle: #F1EFE9;
+  --color-border-hover: #D0CABE;
+  --color-border-focus: #1F4373;
 
   /* Typography */
-  --color-text-primary: #201C17;
-  --color-text-secondary: #4A4239;
-  --color-text-muted: #7B7265;
-  --color-text-tertiary: #A49A8B;
+  --color-text-primary: #1E1917;
+  --color-text-secondary: #4A423A;
+  --color-text-muted: #847B6C;
+  --color-text-tertiary: #A9A192;
 
   /* Brand Colors */
-  --color-primary: #285691;
-  --color-primary-hover: #1F4373;
+  --color-primary: #1F4373;
+  --color-primary-hover: #1A3559;
   --color-primary-light: #EEF3FB;
   --color-primary-border: #B6CFEC;
 
@@ -97,4 +211,119 @@ body {
   background: linear-gradient(90deg, #F5F5F4 25%, #EBE8E3 50%, #F5F5F4 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
+}
+
+/* Multi-segment capacity gauge bar */
+.capacity-gauge {
+  display: flex;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: #F1EFE9;
+  width: 100%;
+}
+
+.capacity-gauge-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bg-striped-rose {
+  background-color: #AE452F;
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25), rgba(255,255,255,0.25) 4px, transparent 4px, transparent 8px);
+  background-size: 11px 11px;
+}
+
+.bg-striped-amber {
+  background-color: #B87A26;
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25), rgba(255,255,255,0.25) 4px, transparent 4px, transparent 8px);
+  background-size: 11px 11px;
+}
+
+/* Monospace typography override ensuring JetBrains Mono applies */
+.font-mono,
+.tabular-nums {
+  font-family: 'JetBrains Mono', var(--font-mono-local), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+.font-display {
+  font-family: 'Sora', var(--font-sora), var(--font-inter), sans-serif !important;
+}
+
+.table-header-title {
+  font-family: 'JetBrains Mono', var(--font-mono-local), ui-monospace, monospace !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #847B6C !important;
+  text-transform: uppercase !important;
+}
+
+/* Reference KPI Card System Matching Refference/styles.css */
+.kpi-card {
+  background: #ffffff !important;
+  border: 1px solid #E7E2DA !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(32, 27, 23, 0.04), 0 4px 14px -7px rgba(32, 27, 23, 0.06) !important;
+  padding: 22px 24px !important;
+  min-height: 148px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 24px -10px rgba(32, 27, 23, 0.14) !important;
+  border-color: #D0C8BE !important;
+}
+
+.kpi-label {
+  font-family: 'JetBrains Mono', var(--font-mono-local), ui-monospace, monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #847B6C !important;
+}
+
+.kpi-value {
+  font-family: 'Sora', var(--font-sora), sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.035em !important;
+  line-height: 1.1 !important;
+}
+
+.kpi-sub {
+  font-size: 13px !important;
+  color: #847B6C !important;
+  font-weight: 500 !important;
+}
+
+.kpi-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Hide scrollbar universally for no-scrollbar containers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }

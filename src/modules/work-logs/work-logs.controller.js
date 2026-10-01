@@ -3,6 +3,38 @@ import { getAuthUserId } from "@/lib/auth-helper";
 import * as workLogsService from "./work-logs.service.js";
 import { validateCreateWorkLog } from "./work-logs.validator.js";
 
+// GET /api/work-logs - List work logs across all or filtered by user/task
+export async function listAllWorkLogsController(request) {
+  try {
+    const authUserId = await getAuthUserId(request);
+    if (!authUserId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const filters = {
+      userId: searchParams.get("user_id") || searchParams.get("developer_id") || null,
+      taskId: searchParams.get("task_id") || null,
+      fromDate: searchParams.get("from_date") || null,
+      toDate: searchParams.get("to_date") || null,
+      limit: searchParams.get("limit") ? parseInt(searchParams.get("limit"), 10) : 50,
+    };
+
+    const logs = await workLogsService.getAllWorkLogs(filters);
+    return NextResponse.json({
+      status: "success",
+      count: logs.length,
+      data: logs,
+    });
+  } catch (err) {
+    console.error("[workLogs.controller.listAllWorkLogs] Error:", err);
+    return NextResponse.json(
+      { error: "Internal server error", message: err.message },
+      { status: 500 }
+    );
+  }
+}
+
 // GET /api/tasks/:id/work-logs - List logs for a task
 export async function getTaskWorkLogsController(request, context) {
   try {

@@ -55,6 +55,26 @@ export async function findAll(filters = {}) {
     query += ` AND ta.user_id = $${params.length}`;
   }
 
+  if (filters.due_date || filters.date) {
+    params.push(filters.due_date || filters.date);
+    query += ` AND (t.due_date::date = $${params.length}::date OR t.created_at::date = $${params.length}::date)`;
+  }
+
+  if (filters.from_date) {
+    params.push(filters.from_date);
+    query += ` AND (t.due_date::date >= $${params.length}::date)`;
+  }
+
+  if (filters.to_date) {
+    params.push(filters.to_date);
+    query += ` AND (t.due_date::date <= $${params.length}::date)`;
+  }
+
+  if (filters.search) {
+    params.push(`%${filters.search.trim()}%`);
+    query += ` AND (t.title ILIKE $${params.length} OR t.description ILIKE $${params.length})`;
+  }
+
   query += `
     GROUP BY t.id, s.id, u.id
     ORDER BY 
@@ -69,6 +89,11 @@ export async function findAll(filters = {}) {
 
   const result = await pool.query(query, params);
   return result.rows;
+}
+
+// Helper to find tasks assigned to a specific user
+export async function findAssignedTasks(userId) {
+  return findAll({ assigned_user_id: userId });
 }
 
 // Find single task by ID with assigned developers and active blockers

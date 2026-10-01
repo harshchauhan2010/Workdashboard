@@ -3,6 +3,11 @@ import * as tasksRepo from "@/modules/tasks/tasks.repository.js";
 import * as usersRepo from "@/modules/users/users.repository.js";
 import * as authRepo from "@/modules/auth/auth.repository.js";
 
+// List all work logs with optional filters
+export async function getAllWorkLogs(filters = {}) {
+  return await workLogsRepo.findAll(filters);
+}
+
 // List all work logs for a task
 export async function getLogsForTask(taskId) {
   const task = await tasksRepo.findById(taskId);

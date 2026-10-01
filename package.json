@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.2",
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "chart.js": "^4.5.1",
+    "lucide-react": "^1.48.0",
     "next": "16.3.5",
     "pg": "^8.23.0",
     "react": "19.2.8",

@@ -39,9 +39,17 @@ export async function listRoutinesController(request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId") || searchParams.get("user_id");
+    let userId = searchParams.get("userId") || searchParams.get("user_id");
     const squadId = searchParams.get("squadId") || searchParams.get("squad_id");
     const frequency = searchParams.get("frequency");
+
+    // Strictly scope routines to the authenticated developer if no explicit userId requested
+    if (!userId) {
+      const dbUser = await routinesService.resolveDbUser(authUserId);
+      if (dbUser) {
+        userId = dbUser.id;
+      }
+    }
 
     const routines = await routinesService.getAllRoutines({
       userId,
